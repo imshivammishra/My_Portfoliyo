@@ -44,7 +44,7 @@ html {
 .container {
   max-width: 1080px;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 1.5rem; 
 }
 
 /* Navigation Bar */
@@ -65,7 +65,8 @@ html {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 0;
+  /* Original vertical padding. Horizontal padding is now handled by media queries. */
+  padding: 1rem 0; 
 }
 .logo {
   font-weight: 700;
@@ -125,33 +126,32 @@ html {
 
 /* Responsive Navbar for mobile devices */
 @media(max-width: 768px) {
+  /* This media query block only handles the toggle menu, not the main header spacing. */
   .menu-btn {
     display: flex;
   }
   .nav-links {
-    position: fixed;
-    top: 64px;
-    right: 0;
+    position: absolute; 
+    top: 64px; 
+    /* This will be adjusted in the smaller media queries to match padding */
+    right: 1.5rem; 
     width: 220px;
     background: var(--card-bg);
     flex-direction: column;
-    /* Changed height: 0 to max-height: 0 for dynamic content support */
-    max-height: 0; 
+    max-height: 0;
     overflow: hidden;
-    box-shadow: -4px 0 15px var(--shadow);
+    box-shadow: 4px 4px 15px var(--shadow);
     padding: 0 1.5rem;
     transition: max-height 0.3s ease;
-    border-radius: 0 0 10px 10px; /* Added slight curve to the bottom */
+    border-radius: 10px;
   }
-  /* Use a large max-height for dynamic content instead of a fixed height */
   .nav-links.open {
     max-height: 400px;
-    padding: 1rem 1.5rem; /* Add vertical padding when open */
-    border: 1px solid var(--border-color); /* Add border for definition */
-    border-top: none;
+    padding: 1rem 1.5rem;
+    border: 1px solid var(--border-color);
   }
   .nav-links a {
-    padding: 0.75rem 0; /* Adjusted padding */
+    padding: 0.75rem 0;
     font-size: 1.1rem;
     border-bottom: 1px solid var(--border-color);
   }
@@ -171,6 +171,11 @@ html {
   cursor: pointer;
   user-select: none;
   transition: all 0.3s ease;
+  font-size: 0.9rem;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 #theme-toggle:hover {
   background: var(--primary);
@@ -179,7 +184,7 @@ html {
 
 /* HERO Section styling */
 .hero {
-  margin-top: 80px;
+  margin-top: 64px;
   padding: 4rem 0 6rem;
 }
 .hero-container {
@@ -215,7 +220,7 @@ html {
   text-decoration: none;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease;
-  white-space: nowrap; /* Prevent button text from wrapping */
+  white-space: nowrap; 
 }
 .btn-primary:hover {
   background-color: var(--btn-hover-bg);
@@ -262,10 +267,16 @@ html {
   text-align: left;
 }
 .about-photo {
-  flex: 1 1 320px;
-  max-width: 320px;
+  flex: 0 0 auto; 
+  max-width: 350px; 
   border-radius: 20px;
   box-shadow: 0 25px 50px rgba(0,0,0,0.1);
+  overflow: hidden; 
+}
+.about-photo img {
+    width: 100%;
+    height: auto;
+    display: block;
 }
 .about-text {
   flex: 2 1 500px;
@@ -358,7 +369,7 @@ html {
   width: 100%;
   height: 210px;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  transition: transform 0.4s ease;
 }
 .card:hover img {
   transform: scale(1.07);
@@ -369,7 +380,6 @@ html {
 .card-content h3 {
   font-weight: 800;
   font-size: 1.4rem;
-  margin-bottom: 1rem;
   color: var(--primary);
 }
 .card-content p {
@@ -417,7 +427,7 @@ html {
   cursor: default;
 }
 .certificate-image {
-  width: 140px; 
+  width: 140px;
   height: 100px;
   object-fit: contain;
   border-radius: 12px;
@@ -439,14 +449,13 @@ html {
   color: var(--secondary-text);
   margin-bottom: 0.4rem;
 }
-/* Ensure the button stays aligned correctly on desktop */
 .certificate-item .btn-outline {
   padding: 0.55rem 1.6rem;
   font-weight: 600;
   border-radius: 50px;
   text-decoration: none;
   align-self: flex-start;
-  margin-top: 0.5rem; /* Added small margin for separation */
+  margin-top: 0.5rem; 
 }
 
 /* Contact Section */
@@ -539,48 +548,102 @@ html {
 
 /*
 |--------------------------------------------------------------------------
-| PROFESSIONAL MOBILE RESPONSIVENESS (MAX-WIDTH: 900PX)
+| MOBILE RESPONSIVENESS
 |--------------------------------------------------------------------------
 */
+
+/* Tablet/Mid-Screen View */
 @media(max-width: 900px) {
+  .navbar .container {
+    padding: 1rem 1.5rem; 
+    display: flex; /* Ensure it's a flex container */
+    align-items: center;
+    /* This will push the first and last elements to the edges.
+       We'll control which elements these are with 'order'. */
+    justify-content: space-between; 
+    gap: 0; /* No gap when using absolute positioning and space-between */
+    position: relative; /* Crucial for absolute positioning of logo */
+  }
+
+  /* Reset previous logo margin and center it */
+  .logo {
+    margin: 0 !important; /* Remove any existing margins */
+    position: absolute; /* Take logo out of the flex flow */
+    left: 50%; /* Start at 50% from the left edge of the parent */
+    transform: translateX(-50%); /* Pull it back by half its own width to truly center */
+    z-index: 10; /* Ensure logo is on top if elements overlap */
+  }
+  
+  /* Place theme toggle on the very left (Flex item with order 1) */
+  #theme-toggle {
+    margin: 0 !important; 
+    order: 1; /* Sets it as the first visible item in flex order */
+    /* Add padding to the container if you want space from the very edge */
+  }
+
+  /* Place menu button on the very right (Flex item with order 3) */
+  .menu-btn {
+    margin: 0 !important; 
+    order: 3; /* Sets it as the last visible item in flex order */
+    /* Add padding to the container if you want space from the very edge */
+  }
+
+  /* Nav links are hidden, but keep their order for clarity */
+  .nav-links {
+    right: 1.5rem; /* Maintain its dropdown position */
+    order: 2; /* Conceptually in the middle, but display:none */
+  }
+
+  .container {
+    padding: 0 1.5rem; 
+  }
+  
   /* General Section Adjustments */
   .section {
-    padding: 4rem 1.5rem; /* Reduced vertical padding */
+    padding: 4rem 1.5rem; 
   }
   .section-title {
-    font-size: 2.25rem; /* Slightly smaller title for tablets */
+    font-size: 2.25rem; 
     margin-bottom: 2rem;
   }
   
-  /* Hero & About: Stacking and Centering */
   .hero-container,
   .about-container {
-    flex-direction: column; /* Force vertical stacking */
-    text-align: center; 
-    gap: 2rem; /* Reduced gap for mobile */
+    flex-direction: column; 
+    text-align: center;
+    gap: 2.5rem; 
   }
 
   /* Hero Specifics */
   .hero-text {
     text-align: center;
+    flex: 1 1 100%;
+    min-width: unset;
   }
   .hero-text h1 {
-    font-size: 2.5rem; /* Main heading size for mobile */
+    font-size: 2.5rem; 
   }
   .hero-text p {
     font-size: 1.1rem;
   }
   .hero-image {
-    max-width: 90%; /* Control image size */
-    box-shadow: 0 15px 30px var(--shadow); /* Softer shadow for mobile */
+    max-width: 100%;
+    flex: 1 1 100%;
+    margin: 0 auto; 
+    box-shadow: 0 15px 30px var(--shadow); 
   }
-  
+  .hero-image img {
+    width: 100%;
+    height: auto;
+  }
+
   /* About Specifics */
   .about-photo {
-    max-width: 70%; /* Image prominence on mobile */
+    max-width: 80%;
+    flex: 0 0 auto;
   }
   .about-text {
-    padding: 0 1rem;
+    padding: 0 0.5rem;
     text-align: center;
   }
   .about-social-links {
@@ -589,14 +652,14 @@ html {
 
   /* Certificates: Stack Image and Text for Mobile */
   .certificate-item {
-    flex-direction: column; /* Stack image, text, button vertically */
+    flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: 1.5rem; /* Adjusted padding */
+    padding: 1.5rem; 
   }
   .certificate-image {
-    width: 100%; /* Image takes full width of the item container */
-    max-width: 200px; /* Max width to prevent distortion */
+    width: 100%; 
+    max-width: 200px;
     height: auto;
     margin-bottom: 1rem;
   }
@@ -607,46 +670,52 @@ html {
     margin-bottom: 1rem;
   }
   .certificate-item .btn-outline {
-    align-self: center; /* Center the button in the stacked layout */
-    width: 100%; /* Make button full width for easy tapping */
+    align-self: center;
+    width: 100%; 
     max-width: 280px;
     padding: 0.8rem 1.75rem;
   }
 
   /* Project Grid */
   .grid {
-    grid-template-columns: 1fr; /* Single column layout for projects */
+    grid-template-columns: 1fr;
   }
   .card-content {
       text-align: center;
   }
   .card-content .btn-outline {
-      width: 100%; /* Full width button in project card */
-      text-align: center;
+      width: 100%;
+      max-width: 280px;
+      margin: 0 auto;
   }
-  
+
   /* Buttons: Ensure full width for better touch targets */
   .btn-primary,
   .btn-outline {
     width: 100%;
-    max-width: 320px; /* Optional: cap max width for aesthetics */
+    max-width: 320px; 
     text-align: center;
     padding: 1rem 1.5rem;
     font-size: 1.1rem;
-    margin: 0 auto; /* Center block buttons */
+  }
+  /* Re-added centering for primary button */
+  .hero-text .btn-primary {
+      margin: 0 auto;
   }
 }
 
-/*
-|--------------------------------------------------------------------------
-| EXTRA SMALL SCREENS (MAX-WIDTH: 480PX)
-|--------------------------------------------------------------------------
-| For tighter controls on very small phones.
-*/
+/* Small Mobile View */
 @media(max-width: 480px) {
-  /* General Spacing */
+  .navbar .container {
+    padding: 1rem 1rem; 
+  }
+  
+  .nav-links {
+    right: 1rem; 
+  }
+
   .container {
-    padding: 0 1rem;
+    padding: 0 1rem; 
   }
   
   /* Typography */
@@ -659,6 +728,12 @@ html {
   .hero-text p {
     font-size: 1rem;
     margin-bottom: 1.5rem;
+  }
+
+  /* Hero & About Image Size Adjustments */
+  .hero-image,
+  .about-photo {
+      max-width: 100%; 
   }
 
   /* Footer Layout */

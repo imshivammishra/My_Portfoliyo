@@ -274,6 +274,7 @@
     </div>
 
     <script>
+        
         document.addEventListener('DOMContentLoaded', () => {
             const chatWindow = document.getElementById('chat-window');
             const queryInput = document.getElementById('query-input');
@@ -283,7 +284,7 @@
             const backToChatButton = document.getElementById('back-to-chat');
             const newChatButton = document.getElementById('new-chat');
             const ctx = animationCanvas.getContext('2d');
-            const TEXT_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=AIzaSyDOovAwXGoQNaO8HMGshqEo3Oum-aCVcUs';
+            const TEXT_API_URL = 'Put Your Api Here';
             const SYSTEM_INSTRUCTION = `You are an educational assistant. Your goal is to provide concise, accurate, and easy-to-understand explanations for scientific and mathematical concepts. You should:
             - Respond to user queries with helpful explanations.
             - If a user asks for "feedback," "critique," "check my work," or a similar phrase, respond with a pre-written, encouraging message.
