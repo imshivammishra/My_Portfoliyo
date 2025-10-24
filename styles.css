@@ -470,8 +470,8 @@ html {
   gap: 1.8rem;
   font-size: 1rem;
 }
-.contact-form input,
-.contact-form textarea {
+
+.contact-form label{
   padding: 1rem 1.3rem;
   border-radius: 20px;
   border: 1.8px solid var(--border-color);
@@ -481,8 +481,26 @@ html {
   background: var(--bg);
   color: var(--text);
 }
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background: transparent;
+  color: var(--text);
+}
 .contact-form input:focus,
 .contact-form textarea:focus {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background: transparent;
+  color: var(--text);
+}
+
+.contact-form label:focus{
   outline: none;
   border-color: var(--primary);
 }
