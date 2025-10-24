@@ -9,7 +9,7 @@ mongoose
   .catch((err) => console.error("DB connection failed", err));
 
 async function createAdmin() {
-  const email = "shivammishra@gmail.com";
+  const email = "youremail@gmail.com";
   const existing = await User.findOne({ email });
 
   if (existing) {
@@ -17,7 +17,7 @@ async function createAdmin() {
     process.exit();
   }
 
-  const hashedPassword = await bcrypt.hash("muskansingh", 10);
+  const hashedPassword = await bcrypt.hash("yourpass", 10);
 
   const adminUser = new User({
     name: "Admin",
