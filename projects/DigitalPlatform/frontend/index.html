@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NextEd - Your Digital Learning Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a'
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'bounce-soft': 'bounceSoft 2s infinite',
+                        'gradient': 'gradient 6s ease infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'spin': 'spin 1s linear infinite'
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                        'mesh-gradient': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                        'card-gradient': 'linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            min-height: 100vh;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+        }
+
+        .glass-card-solid {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark .glass-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .dark .glass-card-solid {
+            background: rgba(30, 41, 59, 0.95);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #ffffff 0%, #7453ad 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .floating-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .shape:nth-child(1) {
+            width: 120px;
+            height: 120px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 80px;
+            height: 80px;
+            top: 60%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            top: 30%;
+            right: 30%;
+            animation-delay: 4s;
+        }
+        .section-padding{
+            margin-top:  7rem;      }
+
+
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <div class="container mx-auto p-4 md:p-8 min-h-screen">
+
+        <nav class="glass-card rounded-2xl sticky top-4 z-50 animate-fade-in">
+            <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+                <a href="index.html">
+                    <img src="assets/NextEd4.png" alt="logo" class="w-24 md:w-36">
+                </a>
+                <div class="hidden md:flex space-x-8 items-center text-white">
+                    <a href="about.html" class="nav-link hover:text-white/80 transition-all duration-300">About Us</a>
+                    <a href="#courses" class="nav-link hover:text-white/80 transition-all duration-300">Courses</a>
+                    <a href="contact.html" class="nav-link hover:text-white/80 transition-all duration-300">Contact Us</a>
+                    <a href="privacy.html" class="nav-link hover:text-white/80 transition-all duration-300">Privacy Policy</a>
+                    <a href="career_navigator.html" class="nav-link hover:text-white/80 transition-all duration-300">Career Guidance</a>
+                    <a href="login.html" class="glass-card px-6 py-2 rounded-full font-semibold hover:bg-white/20 transition-all duration-300">Login</a>
+                </div>
+                <div class="flex items-center gap-3 md:hidden">
+                    <button id="theme-toggle" class="glass-card p-3 rounded-xl text-white hover:bg-white/20 transition-all duration-300 group">
+                        <svg id="sun-icon" class="w-6 h-6 group-hover:rotate-180 transition-transform duration-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
+                        </svg>
+                        <svg id="moon-icon" class="w-6 h-6 group-hover:rotate-180 transition-transform duration-500 hidden" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                        </svg>
+                    </button>
+                    <button id="mobile-menu-button" class="text-white hover:text-white/80 focus:outline-none focus:text-white/80">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div id="mobile-menu" class="hidden md:hidden bg-white/10 backdrop-filter backdrop-blur-lg rounded-b-xl">
+                <a href="about.html" class="block py-2 px-6 text-sm text-white hover:bg-white/20 transition-colors">About Us</a>
+                <a href="#courses" class="block py-2 px-6 text-sm text-white hover:bg-white/20 transition-colors">Courses</a>
+                <a href="contact.html" class="block py-2 px-6 text-sm text-white hover:bg-white/20 transition-colors">Contact Us</a>
+                <a href="privacy.html" class="block py-2 px-6 text-sm text-white hover:bg-white/20 transition-colors">Privacy Policy</a>
+                <a href="login.html" class="block py-2 px-6 text-sm text-white hover:bg-white/20 transition-colors">Login</a>
+            </div>
+        </nav>
+
+        <header class="text-white py-20 md:py-32 flex items-center justify-center text-center rounded-2xl mt-8 glass-card animate-fade-in" style="animation-delay: 0.1s;">
+            <div class="container mx-auto px-6">
+                <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-4">
+                    Learn <span class="gradient-text">Anything</span>. Anytime. Anywhere.
+                </h1>
+                <p class="text-lg md:text-xl mb-8 opacity-90">
+                    Unlock your potential with our vast library of courses and expert-led lessons.
+                </p>
+                <a href="#courses" class="glass-card px-8 py-3 rounded-full font-bold shadow-lg hover:bg-white/20 transition-all duration-300">Explore Courses</a>
+            </div>
+        </header>
+
+   <section id="courses" class="section-padding">
+    <div class="container mx-auto px-6">
+        <h2 class="text-3xl md:text-4xl font-bold text-center text-gray-800 dark:text-white mb-4">Popular <span class="gradient-text">Courses</span></h2>
+        <div class="w-20 h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mx-auto mb-6"></div>
+        <p class="text-center text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-12">
+            Discover our most popular courses curated by industry experts.
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <a href="login.html" class="glass-card-solid rounded-xl shadow-lg overflow-hidden transition-all duration-300 transform hover:scale-105 hover:shadow-2xl block">
+                <img src="https://placehold.co/600x400/667eea/ffffff?text=Web+Development" alt="Web Development Course" class="w-full h-48 object-cover">
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-white">Full-Stack Web Development</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Master front-end and back-end technologies to build modern web applications.</p>
+                    <div class="flex justify-between items-center text-sm font-medium">
+                        <span class="gradient-text flex items-center gap-1">4.9 ⭐</span>
+                        <span class="text-gray-500 dark:text-gray-400">120 Lessons</span>
+                    </div>
+                </div>
+            </a>
+            <a href="login.html" class="glass-card-solid rounded-xl shadow-lg overflow-hidden transition-all duration-300 transform hover:scale-105 hover:shadow-2xl block">
+                <img src="https://placehold.co/600x400/764ba2/ffffff?text=Data+Science" alt="Data Science Course" class="w-full h-48 object-cover">
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-white">Introduction to Data Science</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Learn the fundamentals of data analysis, machine learning, and data visualization.</p>
+                    <div class="flex justify-between items-center text-sm font-medium">
+                        <span class="gradient-text flex items-center gap-1">4.8 ⭐</span>
+                        <span class="text-gray-500 dark:text-gray-400">150 Lessons</span>
+                    </div>
+                </div>
+            </a>
+            <a href="login.html" class="glass-card-solid rounded-xl shadow-lg overflow-hidden transition-all duration-300 transform hover:scale-105 hover:shadow-2xl block">
+                <img src="https://placehold.co/600x400/667eea/ffffff?text=Graphic+Design" alt="Graphic Design Course" class="w-full h-48 object-cover">
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-white">Modern Graphic Design</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Unleash your creativity and learn the tools and principles of professional design.</p>
+                    <div class="flex justify-between items-center text-sm font-medium">
+                        <span class="gradient-text flex items-center gap-1">4.7 ⭐</span>
+                        <span class="text-gray-500 dark:text-gray-400">90 Lessons</span>
+                    </div>
+                </div>
+            </a>
+            <a href="login.html" class="glass-card-solid rounded-xl shadow-lg overflow-hidden transition-all duration-300 transform hover:scale-105 hover:shadow-2xl block">
+                <img src="https://placehold.co/600x400/764ba2/ffffff?text=AI+Fundamentals" alt="AI Fundamentals Course" class="w-full h-48 object-cover">
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-white">Fundamentals of Artificial Intelligence</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">A comprehensive guide to the core concepts and applications of AI.</p>
+                    <div class="flex justify-between items-center text-sm font-medium">
+                        <span class="gradient-text flex items-center gap-1">5.0 ⭐</span>
+                        <span class="text-gray-500 dark:text-gray-400">180 Lessons</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+        <section id="help" class="section-padding">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl md:text-4xl font-bold text-center text-gray-800 dark:text-white mb-4">Help <span class="gradient-text">Center</span></h2>
+                <div class="w-20 h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mx-auto mb-6"></div>
+                <p class="text-center text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-12">
+                    Find answers to common questions and get support for your learning journey.
+                </p>
+                <div class="max-w-4xl mx-auto space-y-6">
+                    <div class="glass-card-solid p-6 rounded-xl shadow-lg">
+                        <h3 class="font-semibold text-lg text-gray-800 dark:text-white mb-2">How do I enroll in a course?</h3>
+                        <p class="text-gray-600 dark:text-gray-300">Simply find the course you are interested in and click the "Enroll Now" button. You will be guided through the registration and payment process.</p>
+                    </div>
+                    <div class="glass-card-solid p-6 rounded-xl shadow-lg">
+                        <h3 class="font-semibold text-lg text-gray-800 dark:text-white mb-2">Are the courses self-paced?</h3>
+                        <p class="text-gray-600 dark:text-gray-300">Yes, all our courses are designed to be self-paced, allowing you to learn at your own convenience and on your own schedule.</p>
+                    </div>
+                    <div class="glass-card-solid p-6 rounded-xl shadow-lg">
+                        <h3 class="font-semibold text-lg text-gray-800 dark:text-white mb-2">Do I get a certificate upon completion?</h3>
+                        <p class="text-gray-600 dark:text-gray-300">Yes, you will receive a verifiable certificate of completion for every course you successfully finish.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="glass-card rounded-2xl py-12 mt-8 text-white">
+            <div class="container mx-auto px-6 text-center">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                    <div>
+                        <h3 class="text-lg font-bold mb-4">NextEd</h3>
+                        <p class="text-sm text-white/80">Empowering minds through digital education. Our mission is to make learning accessible to all.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold mb-4">Quick Links</h3>
+                        <ul class="space-y-2 text-sm text-white/80">
+                            <li><a href="about.html" class="hover:text-white/60 transition-all duration-300">About Us</a></li>
+                            <li><a href="#courses" class="hover:text-white/60 transition-all duration-300">Courses</a></li>
+                            <li><a href="contact.html" class="hover:text-white/60 transition-all duration-300">Contact Us</a></li>
+                            <li><a href="#help" class="hover:text-white/60 transition-all duration-300">Help</a></li>
+                            <li><a href="privacy.html" class="hover:text-white/60 transition-all duration-300">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold mb-4">Contact Info</h3>
+                        <ul class="space-y-2 text-sm text-white/80">
+                            <li>Email: <a href="mailto:info@educate.com" class="hover:text-white/60 transition-all duration-300">info@NextEd.com</a></li>
+                            <li>Phone: +1 234 567 890</li>
+                            <li>Address: 123 Learning Lane, Knowledge City, Global</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="border-t border-white/20 pt-8 text-sm text-white/60">
+                    &copy; 2024 NextEd. All rights reserved.
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+
+        // Mobile menu toggle
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Theme toggle
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        const setInitialTheme = () => {
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                document.documentElement.classList.add('dark');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                moonIcon.classList.add('hidden');
+                sunIcon.classList.remove('hidden');
+            }
+        };
+
+        const toggleTheme = () => {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+        };
+
+        themeToggleBtn.addEventListener('click', toggleTheme);
+        setInitialTheme();
+    </script>
+</body>
+</html>

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NextEd - Contact Us</title>
+    <!-- Tailwind CSS with custom configuration -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a'
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'bounce-soft': 'bounceSoft 2s infinite',
+                        'gradient': 'gradient 6s ease infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'spin': 'spin 1s linear infinite'
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                        'mesh-gradient': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                        'card-gradient': 'linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            min-height: 100vh;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+        }
+
+        .glass-card-solid {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark .glass-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .dark .glass-card-solid {
+            background: rgba(30, 41, 59, 0.95);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .floating-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .shape:nth-child(1) {
+            width: 120px;
+            height: 120px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 80px;
+            height: 80px;
+            top: 60%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            top: 30%;
+            right: 30%;
+            animation-delay: 4s;
+        }
+        
+        .section-padding {
+            padding-top: 7rem;
+            padding-bottom: 7rem;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <div class="container mx-auto p-4 md:p-8 min-h-screen">
+
+        <!-- Navigation Bar -->
+        <nav class="glass-card rounded-2xl sticky top-4 z-50 animate-fade-in">
+            <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+                <a href="index.html">
+                    <img src="assets/NextEd3.png" alt="logo" class="w-24 md:w-36">
+                </a>
+                <div class="hidden md:flex space-x-8 items-center text-white">
+                    <a href="index.html" class="nav-link hover:text-white/80 transition-all duration-300">Home</a>
+                    <a href="privacy.html" class="nav-link hover:text-white/80 transition-all duration-300">Privacy Policy</a>
+                    <a href="login.html" class="glass-card px-6 py-2 rounded-full font-semibold hover:bg-white/20 transition-all duration-300">Login</a>
+                </div>
+                <div class="flex items-center gap-3 md:hidden">
+                    <button id="theme-toggle" class="glass-card p-3 rounded-xl text-white hover:bg-white/20 transition-all duration-300 group">
+                        <svg id="sun-icon" class="w-6 h-6 group-hover:rotate-180 transition-transform duration-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
+                        </svg>
+                        <svg id="moon-icon" class="w-6 h-6 group-hover:rotate-180 transition-transform duration-500 hidden" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                        </svg>
+                    </button>
+                    <button id="mobile-menu-button" class="text-white hover:text-white/80 focus:outline-none focus:text-white/80">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div id="mobile-menu" class="hidden md:hidden bg-white/10 backdrop-filter backdrop-blur-lg rounded-b-xl">
+                <a href="privacy.html" class="block py-2 px-6 text-sm text-white hover:bg-white/20 transition-colors">Privacy Policy</a>
+                <a href="login.html" class="block py-2 px-6 text-sm text-white hover:bg-white/20 transition-colors">Login</a>
+            </div>
+        </nav>
+
+        <!-- Contact Section -->
+        <section id="contact" class="section-padding">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl md:text-4xl font-bold text-center text-gray-800 dark:text-white mb-4">Get in <span class="gradient-text">Touch</span></h2>
+                <div class="w-20 h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mx-auto mb-6"></div>
+                <p class="text-center text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-12">
+                    Have questions or need assistance? Our support team is here to help.
+                </p>
+                <div class="max-w-xl mx-auto glass-card-solid p-8 rounded-xl shadow-lg">
+                    <form action="https://formspree.io/f/mdkwooyv" method="POST" id="contact-form">
+                        <div class="mb-4">
+                            <label for="name" class="block text-gray-700 dark:text-gray-300 font-semibold mb-2">Name</label>
+                            <input type="text" id="name" name="name" class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100 dark:bg-gray-700 dark:text-white border-gray-300 dark:border-gray-600" placeholder="Your Name" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="email" class="block text-gray-700 dark:text-gray-300 font-semibold mb-2">Email</label>
+                            <input type="email" id="email" name="email" class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100 dark:bg-gray-700 dark:text-white border-gray-300 dark:border-gray-600" placeholder="Your Email" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="message" class="block text-gray-700 dark:text-gray-300 font-semibold mb-2">Message</label>
+                            <textarea id="message" name="message" rows="4" class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100 dark:bg-gray-700 dark:text-white border-gray-300 dark:border-gray-600" placeholder="Your Message" required></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-md hover:bg-blue-700 transition-all duration-300">
+                            Send Message
+                        </button>
+                        <div id="form-message" class="mt-4 text-center hidden"></div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="glass-card rounded-2xl py-12 mt-8 text-white">
+            <div class="container mx-auto px-6 text-center">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                    <div>
+                        <h3 class="text-lg font-bold mb-4">Educate</h3>
+                        <p class="text-sm text-white/80">Empowering minds through digital education. Our mission is to make learning accessible to all.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold mb-4">Quick Links</h3>
+                        <ul class="space-y-2 text-sm text-white/80">
+                            <li><a href="#about-us" class="hover:text-white/60 transition-all duration-300">About Us</a></li>
+                            <li><a href="#courses" class="hover:text-white/60 transition-all duration-300">Courses</a></li>
+                            <li><a href="#contact" class="hover:text-white/60 transition-all duration-300">Contact Us</a></li>
+                            <li><a href="#help" class="hover:text-white/60 transition-all duration-300">Help</a></li>
+                            <li><a href="#privacy" class="hover:text-white/60 transition-all duration-300">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold mb-4">Contact Info</h3>
+                        <ul class="space-y-2 text-sm text-white/80">
+                            <li>Email: <a href="mailto:info@educate.com" class="hover:text-white/60 transition-all duration-300">info@educate.com</a></li>
+                            <li>Phone: +1 234 567 890</li>
+                            <li>Address: 123 Learning Lane, Knowledge City, Global</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="border-t border-white/20 pt-8 text-sm text-white/60">
+                    &copy; 2024 NextEd. All rights reserved.
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Message container for status updates -->
+    <div id="message-container" class="message-container fixed bottom-4 left-1/2 transform -translate-x-1/2 flex flex-col gap-2 z-[1000]"></div>
+
+    <!-- <script>
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+
+        // Utility function to show messages
+        function showMessage(msg, type = 'success') {
+            const messageContainer = document.getElementById('message-container');
+            const messageDiv = document.createElement('div');
+            // Tailwind classes for success/error messages
+            const baseClasses = "px-4 py-2 rounded-md font-semibold text-sm shadow-md transition-opacity duration-300 ease-in-out opacity-100";
+            const successClasses = "bg-green-500 text-white";
+            const errorClasses = "bg-red-500 text-white";
+            
+            messageDiv.className = `${baseClasses} ${type === 'success' ? successClasses : errorClasses}`;
+            messageDiv.textContent = msg;
+            messageContainer.appendChild(messageDiv);
+
+            // Automatically hide the message after 3 seconds
+            setTimeout(() => {
+                messageDiv.style.opacity = '0';
+                setTimeout(() => messageDiv.remove(), 300);
+            }, 3000);
+        }
+
+        // Mobile menu toggle
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Form submission with fetch API to prevent page reload
+        const contactForm = document.getElementById('contact-form');
+        const submitButton = contactForm.querySelector('button[type="submit"]');
+
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); 
+
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<span class="loading-spinner"></span> Sending...';
+
+            const formData = new FormData(contactForm);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch(contactForm.action, {
+                    method: contactForm.method,
+                    body: JSON.stringify(data),
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                });
+
+                if (response.ok) {
+                    showMessage('Thank you! Your message has been sent.', 'success');
+                    contactForm.reset(); 
+                } else {
+                    const result = await response.json();
+                    if (result.errors) {
+                        showMessage(result.errors.map(error => error.message).join(', '), 'error');
+                    } else {
+                        showMessage('Oops! There was an error sending your message.', 'error');
+                    }
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('An unexpected error occurred. Please try again later.', 'error');
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Send Message';
+            }
+        });
+        
+        // Theme toggle logic
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        const setInitialTheme = () => {
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                document.documentElement.classList.add('dark');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                moonIcon.classList.add('hidden');
+                sunIcon.classList.remove('hidden');
+            }
+        };
+
+        const toggleTheme = () => {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+        };
+
+        themeToggleBtn.addEventListener('click', toggleTheme);
+        setInitialTheme();
+    </script> -->
+</body>
+</html>

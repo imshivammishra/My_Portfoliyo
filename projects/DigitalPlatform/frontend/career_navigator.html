@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Navigator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+        
+        /* Theming for dark mode support */
+        body.dark {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+
+        .container-card {
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            max-width: 90%;
+            width: 70%;
+            padding: 2.5rem;
+            transition: all 0.5s ease;
+        }
+        
+        .dark .container-card {
+            background-color: #1e1e1e;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+        }
+
+        h1, h2, h3 {
+            color: #1f2937;
+        }
+        
+        .dark h1, .dark h2, .dark h3 {
+            color: #d1d5db;
+        }
+
+        .question-transition {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        button {
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        #start-btn, #next-btn, #ask-btn, #message-close-btn {
+            background-color: #3b82f6;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2), 0 2px 4px -1px rgba(59, 130, 246, 0.1);
+        }
+        
+        #start-btn:hover, #next-btn:hover, #ask-btn:hover, #message-close-btn:hover {
+            background-color: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        input[type="text"] {
+            background-color: white;
+            border-color: #d1d5db;
+            color: #1f2937;
+            border-radius: 0.5rem;
+        }
+        
+        .dark input[type="text"] {
+            background-color: #2c2c2c;
+            border-color: #4b5563;
+            color: #e0e0e0;
+        }
+
+        #options-container button {
+            background-color: #f3f4f6;
+            color: #4b5563;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+        }
+        
+        .dark #options-container button {
+            background-color: #2c2c2c;
+            color: #d1d5db;
+            border-color: #4b5563;
+        }
+
+        #options-container button:hover {
+            background-color: #e5e7eb;
+            border-color: #93c5fd;
+        }
+
+        .dark #options-container button:hover {
+            background-color: #374151;
+            border-color: #60a5fa;
+        }
+
+        #options-container button.selected-option {
+            background-color: #3b82f6 !important;
+            color: white !important;
+            border-color: #3b82f6 !important;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);
+        }
+
+        .roadmap-card {
+            background-color: #f9fafb;
+            border-color: #e5e7eb;
+            border-width: 1px;
+            border-radius: 0.75rem;
+        }
+        
+        .dark .roadmap-card {
+            background-color: #2c2c2c;
+            border-color: #4b5563;
+        }
+        
+        #chat-box {
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+        }
+        
+        .dark #chat-box {
+            background-color: #2c2c2c;
+            border-color: #4b5563;
+        }
+
+        .user-chat-bubble {
+            background-color: #eff6ff;
+            color: #1e40af;
+            border-radius: 0.75rem;
+        }
+
+        .dark .user-chat-bubble {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        .bot-chat-bubble {
+            background-color: #e5e7eb;
+            color: #4b5563;
+            border-radius: 0.75rem;
+        }
+        
+        .dark .bot-chat-bubble {
+            background-color: #374151;
+            color: #d1d5db;
+        }
+
+        .message-box {
+            background-color: #fff;
+            color: #1f2937;
+            border: 2px solid #3b82f6;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-radius: 0.75rem;
+        }
+
+        .dark .message-box {
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+            border: 2px solid #60a5fa;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3b82f6;
+        }
+
+        .dark .loading-spinner {
+            border-top: 4px solid #60a5fa;
+        }
+
+        .bkbtn{
+            padding-left: 800px;
+        }
+        .bkbtn:hower{
+            background: #60a5fa;
+        }
+    </style>
+</head>
+
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <!-- Main Application Container -->
+    <div id="app" class="container-card flex flex-col items-center">
+      <div class="bkbtn"><a href="index.html" class="glass-card px-6 py-3 rounded-xl text-white hover:bg-white/20 transition-all duration-300 font-semibold">
+                        Back to Home
+                    </a>  </div>
+        <!-- Theme Toggle Button -->
+        <div class="absolute top-4 right-4">
+            <button id="theme-toggle" class="p-2 rounded-full bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 shadow-md">
+                <!-- Half-moon icon for dark mode -->
+                <svg id="moon-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                </svg>
+                <!-- Sun icon for light mode -->
+                <svg id="sun-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="text-center">
+            <h1 class="text-4xl font-bold mb-4">Welcome to Your Career Navigator</h1>
+            <p class="text-lg text-gray-500 mb-8">
+                Get started on your career path with a personalized roadmap.
+            </p>
+            <button id="start-btn" class="px-8 py-4 font-semibold rounded-lg shadow-lg">
+                Get Started
+            </button>
+        </div>
+
+        <!-- Q&A Section -->
+        <div id="qna-section" class="w-full hidden question-transition">
+            <div class="mb-6">
+                <p class="text-sm text-gray-500 font-medium">Question <span id="question-number">1</span> of 4</p>
+                <h2 id="question-text" class="text-2xl font-semibold mt-2"></h2>
+            </div>
+            <input id="answer-input" type="text" placeholder="Type your answer..." class="w-full px-4 py-3 border focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <div id="options-container" class="mt-4 hidden grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            <button id="next-btn" class="mt-6 w-full px-8 py-4 font-semibold shadow-md">
+                Next
+            </button>
+        </div>
+
+        <!-- Roadmap Section -->
+        <div id="roadmap-section" class="w-full hidden">
+            <h2 class="text-3xl font-bold mb-6 text-center">Your Career Roadmap</h2>
+            <div id="roadmap-content" class="space-y-6"></div>
+            
+            <hr class="my-8 border-t border-gray-300 dark:border-gray-700">
+
+            <!-- Follow-up Q&A -->
+            <div class="mt-8">
+                <h3 class="text-2xl font-semibold mb-4">Ask a Follow-up Question</h3>
+                <div id="chat-box" class="h-64 overflow-y-auto p-4 border mb-4">
+                    <div class="text-gray-500 text-sm">Hi there! How can I help you with your career path?</div>
+                </div>
+                <div class="flex gap-2">
+                    <input id="follow-up-input" type="text" placeholder="e.g., How do I get experience?" class="flex-grow px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button id="ask-btn" class="px-6 py-3 font-semibold shadow-md flex items-center justify-center rounded-lg">
+                        <span id="ask-text">Ask</span>
+                        <div id="ask-spinner" class="loading-spinner hidden w-5 h-5 rounded-full animate-spin"></div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Box for Alerts -->
+    <div id="message-box" class="message-box hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 p-6 rounded-lg text-center w-full max-w-sm">
+        <p id="message-text" class="text-lg mb-4"></p>
+        <button id="message-close-btn" class="px-6 py-2 font-semibold rounded-lg">OK</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- UI Elements ---
+            const welcomeScreen = document.getElementById('welcome-screen');
+            const startBtn = document.getElementById('start-btn');
+            const qnaSection = document.getElementById('qna-section');
+            const roadmapSection = document.getElementById('roadmap-section');
+            const questionNumberSpan = document.getElementById('question-number');
+            const questionText = document.getElementById('question-text');
+            const answerInput = document.getElementById('answer-input');
+            const optionsContainer = document.getElementById('options-container');
+            const nextBtn = document.getElementById('next-btn');
+            const roadmapContent = document.getElementById('roadmap-content');
+            const chatBox = document.getElementById('chat-box');
+            const followUpInput = document.getElementById('follow-up-input');
+            const askBtn = document.getElementById('ask-btn');
+            const askText = document.getElementById('ask-text');
+            const askSpinner = document.getElementById('ask-spinner');
+            const messageBox = document.getElementById('message-box');
+            const messageText = document.getElementById('message-text');
+            const messageCloseBtn = document.getElementById('message-close-btn');
+            
+            // Theme toggle elements
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const moonIcon = document.getElementById('moon-icon');
+            const sunIcon = document.getElementById('sun-icon');
+            const body = document.body;
+
+            // --- Theme Logic ---
+            const updateThemeIcon = (isDark) => {
+                if (isDark) {
+                    moonIcon.classList.remove('hidden');
+                    sunIcon.classList.add('hidden');
+                } else {
+                    moonIcon.classList.add('hidden');
+                    sunIcon.classList.remove('hidden');
+                }
+            };
+            
+            const currentTheme = localStorage.getItem('theme');
+            const isDarkInitially = currentTheme === 'dark';
+            if (isDarkInitially) {
+                body.classList.add('dark');
+            }
+            updateThemeIcon(isDarkInitially);
+
+            themeToggleBtn.addEventListener('click', () => {
+                const isCurrentlyDark = body.classList.toggle('dark');
+                localStorage.setItem('theme', isCurrentlyDark ? 'dark' : 'light');
+                updateThemeIcon(isCurrentlyDark);
+            });
+
+            // --- Data for Roadmaps & Q&A ---
+            const careerData = {
+                'Software Engineering': {
+                    roadmap: [
+                        { title: 'Step 1: Foundational Skills', description: 'Begin by mastering a core programming language like Python or JavaScript. Learn about data structures and algorithms, which are the building blocks of any software.' },
+                        { title: 'Step 2: Build a Project', description: 'Create a personal project to apply your skills. This could be a web application, a mobile app, or a simple game. A portfolio of projects is essential for showcasing your abilities.' },
+                        { title: 'Step 3: Choose a Specialization', description: 'Decide on a field you want to specialize in—such as front-end, back-end, mobile, or game development. Master the frameworks and tools used in that area, like React, Node.js, or Swift.' },
+                        { title: 'Step 4: Network and Apply', description: 'Connect with people in the industry on platforms like LinkedIn. Prepare for technical interviews by practicing coding challenges and behavioral questions. Apply for internships or entry-level positions.' }
+                    ],
+                    faq: [
+                        { keywords: ['get', 'experience', 'jobs'], response: 'To gain experience, look for internships, contribute to open-source projects on GitHub, or take on freelance work to build your portfolio.' },
+                        { keywords: ['learn', 'skills', 'start'], response: 'Begin with a popular language like Python or JavaScript, as they have vast resources. Platforms like FreeCodeCamp, Coursera, and edX offer structured learning paths.' },
+                        { keywords: ['portfolio', 'project'], response: 'A strong portfolio should include a few polished, unique projects. It shows potential employers what you can build on your own and how you think as a developer.' }
+                    ]
+                },
+                'Data Science': {
+                    roadmap: [
+                        { title: 'Step 1: Foundational Skills', description: 'Master the fundamentals of mathematics and statistics, as well as a programming language like Python or R. Become proficient with data manipulation and analysis libraries like Pandas.' },
+                        { title: 'Step 2: Learn Machine Learning', description: 'Study machine learning concepts, including supervised and unsupervised learning. Practice building models using libraries like scikit-learn and TensorFlow.' },
+                        { title: 'Step 3: Work on Projects', description: 'Use public datasets from platforms like Kaggle to build a portfolio of projects. This will help you apply your theoretical knowledge and demonstrate your skills to potential employers.' },
+                        { title: 'Step 4: Specialize and Certify', description: 'Choose a specialization, such as natural language processing (NLP) or computer vision. Consider professional certifications from companies like Google or IBM to validate your expertise.' }
+                    ],
+                    faq: [
+                        { keywords: ['get', 'experience', 'jobs'], response: 'The best way to get experience is by working on projects. Look for data science challenges on Kaggle, find a non-profit organization that needs data analysis help, or create your own project.' },
+                        { keywords: ['learn', 'skills', 'start'], response: 'Start with Python and its data science libraries (Pandas, NumPy, Scikit-learn). Then, explore platforms like DataCamp and Coursera for structured data science courses.' },
+                        { keywords: ['portfolio', 'project'], response: 'Your data science portfolio should include projects that demonstrate your entire workflow, from data cleaning and analysis to model building and visualization.' }
+                    ]
+                },
+                'UX/UI Design': {
+                    roadmap: [
+                        { title: 'Step 1: Foundational Skills', description: 'Learn the core principles of user-centered design, including typography, color theory, and layout. Understand the difference between user experience (UX) and user interface (UI) design.' },
+                        { title: 'Step 2: Master Design Tools', description: 'Become proficient with industry-standard design tools like Figma, Sketch, or Adobe XD. Use these tools to create wireframes, mockups, and interactive prototypes.' },
+                        { title: 'Step 3: Build a Comprehensive Portfolio', description: 'Create case studies that document your design process from problem discovery to final solution. Showcase your research, wireframes, and final high-fidelity designs for a few projects.' },
+                        { title: 'Step 4: Get Feedback and Iterate', description: 'Conduct user research and usability testing to get feedback on your designs. Learn to iterate and improve your designs based on real user data.' }
+                    ],
+                    faq: [
+                        { keywords: ['get', 'experience', 'jobs'], response: 'You can gain experience through freelance projects for small businesses, pro bono work for non-profits, or by redesigning popular websites or apps and creating case studies for your portfolio.' },
+                        { keywords: ['learn', 'skills', 'start'], response: 'The best way to start is by taking an online course or bootcamp focused on UX/UI design. These programs often teach both theory and practical skills with design tools.' },
+                        { keywords: ['portfolio', 'project'], response: 'Your portfolio should tell a story. For each project, explain the problem you were solving, your design process, your final solution, and what you learned from the experience.' }
+                    ]
+                },
+                'Digital Marketing': {
+                    roadmap: [
+                        { title: 'Step 1: Foundational Skills', description: 'Learn the fundamentals of SEO, content marketing, social media marketing, and email marketing. Read industry blogs and follow marketing experts to stay current.' },
+                        { title: 'Step 2: Acquire Practical Skills', description: 'Get hands-on experience with tools like Google Analytics, social media management platforms, and email marketing software. Run small-scale campaigns to practice your skills.' },
+                        { title: 'Step 3: Earn Certifications', description: 'Obtain certifications from recognized platforms like Google (e.g., Google Ads, Google Analytics) and HubSpot to validate your knowledge to employers.' },
+                        { title: 'Step 4: Build a Case Study Portfolio', description: 'Create a portfolio that showcases successful campaigns you have run, even if they were for a personal project or a mock business. Highlight the results and your role in achieving them.' }
+                    ],
+                    faq: [
+                        { keywords: ['get', 'experience', 'jobs'], response: 'You can get experience by starting a personal blog, managing social media for a local business, or running a small ad campaign for a project you care about. These experiences can be a great addition to your resume.' },
+                        { keywords: ['learn', 'skills', 'start'], response: 'Begin by taking free courses offered by Google and HubSpot. These platforms provide excellent foundational knowledge and certifications that are highly respected in the industry.' },
+                        { keywords: ['portfolio', 'project'], response: 'A strong digital marketing portfolio includes case studies that detail the objective, strategy, execution, and results of a marketing campaign. Quantify your success with metrics like traffic, engagement, or conversions.' }
+                    ]
+                },
+                'Product Management': {
+                    roadmap: [
+                        { title: 'Step 1: Foundational Skills', description: 'Understand the core principles of product management, including the product lifecycle, market analysis, and user research. Read books like "Cracking the PM Interview" and follow industry blogs.' },
+                        { title: 'Step 2: Develop Key Skills', description: 'Focus on communication, problem-solving, and a basic understanding of technology. Learn to write clear product requirements, create wireframes, and analyze product data.' },
+                        { title: 'Step 3: Build Relevant Experience', description: 'Look for opportunities to act as a product owner or project manager in your current role. Start a side project to practice building and launching a product from scratch.' },
+                        { title: 'Step 4: Network and Pursue Certifications', description: 'Connect with product managers on LinkedIn and attend industry events. A mentor can provide valuable guidance and open doors to new opportunities.' }
+                    ],
+                    faq: [
+                        { keywords: ['get', 'experience', 'jobs'], response: 'Gaining experience can be challenging. Look for product analyst or project manager roles, or start a side project where you manage the entire lifecycle of a small product to build a portfolio.' },
+                        { keywords: ['learn', 'skills', 'start'], response: 'Start by learning about the product development lifecycle and key frameworks like Agile or Scrum. A good next step is taking an online course that covers product management fundamentals.' },
+                        { keywords: ['portfolio', 'project'], response: 'A product management portfolio should include case studies that detail your process in solving a user problem. Highlight your research, user stories, and how you measured success.' }
+                    ]
+                },
+                'Financial Analyst': {
+                    roadmap: [
+                        { title: 'Step 1: Foundational Skills', description: 'Earn a bachelor\'s degree in finance, accounting, economics, or a related field. Master core financial concepts like valuation, accounting principles, and financial modeling.' },
+                        { title: 'Step 2: Develop Technical Skills', description: 'Become proficient in Microsoft Excel for data analysis and financial modeling. Learn programming languages like Python or R for advanced analytics and automation.' },
+                        { title: 'Step 3: Gain Practical Experience', description: 'Seek internships in a finance-related field to get hands-on experience with real-world financial data. This is crucial for applying your academic knowledge.' },
+                        { title: 'Step 4: Pursue Professional Certifications', description: 'Consider certifications like the CFA (Chartered Financial Analyst) or CPA (Certified Public Accountant). These demonstrate a high level of expertise and can significantly boost your career.' }
+                    ],
+                    faq: [
+                        { keywords: ['get', 'experience', 'jobs'], response: 'Internships are essential for gaining experience. You can also gain experience by managing a personal investment portfolio or volunteering to help a small business with its financial planning.' },
+                        { keywords: ['learn', 'skills', 'start'], response: 'Start by mastering foundational accounting and financial principles. Online courses on financial modeling, valuation, and Excel are also highly recommended.' },
+                        { keywords: ['portfolio', 'project'], response: 'Your portfolio should include financial models you\'ve built, equity research reports, or investment theses. These projects demonstrate your analytical and modeling skills.' }
+                    ]
+                },
+                'Doctor': {
+                    roadmap: [
+                        { title: 'Step 1: Foundational Skills', description: 'Earn a bachelor\'s degree with a strong foundation in biology, chemistry, and physics. Volunteer in a healthcare setting to gain experience and confirm your interest.' },
+                        { title: 'Step 2: Attend Medical School', description: 'Pass the MCAT and enroll in an accredited medical school. This intensive four-year program covers foundational sciences and clinical rotations.' },
+                        { title: 'Step 3: Complete a Residency Program', description: 'After medical school, begin a residency in your chosen specialty (e.g., surgery, pediatrics, internal medicine). This hands-on training lasts from 3 to 7 years.' },
+                        { title: 'Step 4: Obtain Licensure and Certification', description: 'Pass the required medical licensing exams and, if desired, pursue board certification in your specialty. This is the final step to practicing independently.' }
+                    ],
+                    faq: [
+                        { keywords: ['get', 'experience', 'jobs'], response: 'Experience is key. Volunteer at a hospital, clinic, or long-term care facility. Shadowing a physician is a great way to understand the day-to-day realities of the profession.' },
+                        { keywords: ['learn', 'skills', 'start'], response: 'Focus on excelling in science courses in college. Participate in research and extracurricular activities that demonstrate your dedication to medicine.' },
+                        { keywords: ['portfolio', 'project'], response: 'Your "portfolio" is your application. It should include strong academic transcripts, high MCAT scores, letters of recommendation, and documented clinical and research experience.' }
+                    ]
+                },
+                'Manager': {
+                    roadmap: [
+                        { title: 'Step 1: Foundational Skills', description: 'Start in an entry-level role and excel at your job. Understand the day-to-day operations of your team and the business as a whole.' },
+                        { title: 'Step 2: Develop Leadership Skills', description: 'Seek out opportunities to lead projects or mentor junior colleagues. Learn to delegate tasks, provide constructive feedback, and resolve conflicts.' },
+                        { title: 'Step 3: Pursue an Advanced Degree or Certification', description: 'Consider a master\'s degree in business administration (MBA) or a professional certification in project management. This will formalize your knowledge and make you more competitive.' },
+                        { title: 'Step 4: Network and Find Mentors', description: 'Connect with experienced managers and leaders within your company and industry. A mentor can provide valuable guidance and open doors to new opportunities.' }
+                    ],
+                    faq: [
+                        { keywords: ['get', 'experience', 'jobs'], response: 'To get management experience, volunteer to lead a team project, take on responsibilities beyond your current role, or ask your manager for opportunities to learn about their job.' },
+                        { keywords: ['learn', 'skills', 'start'], response: 'Begin by mastering the technical skills of your current role. Then, focus on soft skills like communication, time management, and emotional intelligence.' },
+                        { keywords: ['portfolio', 'project'], response: 'Your portfolio for a management role is your track record. Showcase projects you have led, the results you achieved, and how you successfully managed your team.' }
+                    ]
+                },
+                'Chartered Accountant (CA)': {
+                    roadmap: [
+                        { title: 'Step 1: Foundational Skills', description: 'Register and clear the foundation-level exam (e.g., CPT in India). This tests your basic knowledge in accounting, law, and economics.' },
+                        { title: 'Step 2: Complete the Intermediate Course', description: 'Clear the intermediate-level exams, which cover advanced topics in accounting, taxation, and auditing. This is a critical and challenging stage.' },
+                        { title: 'Step 3: Undergo Practical Training', description: 'Complete a mandatory period of practical training or "articleship" under a practicing Chartered Accountant. This hands-on experience is vital for career development.' },
+                        { title: 'Step 4: Clear the Final Exam and Obtain Membership', description: 'Pass the final level exams and become a member of the professional body. This grants you the right to use the "CA" designation.' }
+                    ],
+                    faq: [
+                        { keywords: ['get', 'experience', 'jobs'], response: 'The most important experience is your articleship. Focus on getting practical training with a reputable firm that offers exposure to various financial and auditing processes.' },
+                        { keywords: ['learn', 'skills', 'start'], response: 'Begin by enrolling in a CA foundation course. Your initial focus should be on building a strong understanding of financial accounting and business law.' },
+                        { keywords: ['portfolio', 'project'], response: 'Your portfolio as a CA is your record of passed exams, your articleship experience, and any specialized certifications or courses you have completed in areas like taxation or forensics.' }
+                    ]
+                },
+                'Lawyer': {
+                    roadmap: [
+                        { title: 'Step 1: Foundational Skills', description: 'Complete a bachelor of law (LLB) or juris doctor (JD) degree. This is typically a three-year program that provides a comprehensive legal education.' },
+                        { title: 'Step 2: Pass the Bar Examination', description: 'After law school, you must pass the bar exam in the jurisdiction where you wish to practice. This is a challenging test that assesses your legal knowledge and reasoning skills.' },
+                        { title: 'Step 3: Secure an Entry-Level Position', description: 'Begin your career as an associate at a law firm, a public defender\'s office, or as a legal counsel for a corporation. This is where you gain real-world experience.' },
+                        { title: 'Step 4: Specialize and Build a Reputation', description: 'Choose a legal specialty such as corporate law, criminal defense, or family law. As you gain experience, you will build a reputation and a client base.' }
+                    ],
+                    faq: [
+                        { keywords: ['get', 'experience', 'jobs'], response: 'Internships and summer associate positions are vital for gaining experience and making connections. Moot court, law review, and legal clinics are also excellent opportunities.' },
+                        { keywords: ['learn', 'skills', 'start'], response: 'The best way to start is with a strong undergraduate GPA and a high score on the LSAT. In law school, focus on developing critical thinking, research, and writing skills.' },
+                        { keywords: ['portfolio', 'project'], response: 'Your legal portfolio includes your law school transcript, bar exam results, and a list of your practical experiences and clerkships. A well-written legal brief can also serve as a strong writing sample.' }
+                    ]
+                },
+                'Judge': {
+                    roadmap: [
+                        { title: 'Step 1: Foundational Skills', description: 'First, follow the path of a lawyer, gaining significant experience in a particular area of law. A strong reputation for integrity and legal expertise is essential.' },
+                        { title: 'Step 2: Gain Leadership Experience', description: 'Take on leadership roles in legal organizations or within your firm. This demonstrates your ability to make decisions and lead others.' },
+                        { title: 'Step 3: Seek Appointment or Election', description: 'Judges are either appointed by a governing body or elected by the public. This process is highly competitive and often requires strong political and professional connections.' },
+                        { title: 'Step 4: Continue Legal Education', description: 'Once appointed, judges must continue their legal education to stay current with changes in the law and maintain their impartiality.' }
+                    ],
+                    faq: [
+                        { keywords: ['get', 'experience', 'jobs'], response: 'To become a judge, you must first be an excellent lawyer. Focus on gaining a wide range of experience, from courtroom litigation to legal research.' },
+                        { keywords: ['learn', 'skills', 'start'], response: 'The best way to start is to build an exceptional legal career. This includes not only legal knowledge but also skills in ethics, integrity, and decision-making.' },
+                        { keywords: ['portfolio', 'project'], response: 'Your "portfolio" is your professional record. It includes your legal cases, your contributions to the legal community, and your reputation among your peers.' }
+                    ]
+                },
+                'Teacher': {
+                    roadmap: [
+                        { title: 'Step 1: Foundational Skills', description: 'Earn a bachelor\'s degree, preferably in the subject you wish to teach. Many teachers get a degree in education or a subject-specific field like history or biology.' },
+                        { title: 'Step 2: Complete a Teacher Preparation Program', description: 'Enroll in a state-approved teacher preparation program. This can be part of your bachelor\'s degree or a separate program, and it includes classroom training and student teaching.' },
+                        { title: 'Step 3: Get Certified and Licensed', description: 'Pass the required state exams to obtain your teaching license or certification. These exams typically test your subject knowledge and teaching skills.' },
+                        { title: 'Step 4: Find a Teaching Position', description: 'Apply for teaching positions at schools in your area. Many schools offer mentoring programs for new teachers to help them acclimate to the profession.' }
+                    ],
+                    faq: [
+                        { keywords: ['get', 'experience', 'jobs'], response: 'Experience is gained through student teaching, a mandatory part of any teacher preparation program. Volunteering as a tutor or a teacher\'s aide can also provide valuable experience.' },
+                        { keywords: ['learn', 'skills', 'start'], response: 'The best way to start is by pursuing a strong education in a subject you are passionate about. This will provide you with the foundational knowledge you need to teach effectively.' },
+                        { keywords: ['portfolio', 'project'], response: 'A teacher\'s portfolio should include lesson plans, examples of student work, and a record of your student teaching experience. It demonstrates your ability to manage a classroom and facilitate learning.' }
+                    ]
+                },
+                'Businessman': {
+                    roadmap: [
+                        { title: 'Step 1: Foundational Skills', description: 'Find a problem that people have and create a product or service that solves it. This is the foundation of any successful business.' },
+                        { title: 'Step 2: Develop a Business Plan', description: 'Create a detailed business plan that outlines your goals, strategies, and financial projections. This is a critical step for securing funding and guiding your business decisions.' },
+                        { title: 'Step 3: Secure Funding', description: 'Whether through personal savings, a loan, or investment from a venture capitalist, you need capital to start and grow your business.' },
+                        { title: 'Step 4: Launch and Scale', description: 'Launch your product or service and get feedback from your first customers. Use this feedback to improve your offering and scale your business.' }
+                    ],
+                    faq: [
+                        { keywords: ['get', 'experience', 'jobs'], response: 'The best way to gain experience is to start. Begin with a small side hustle to learn about sales, marketing, and finance before you commit to a full-time venture.' },
+                        { keywords: ['learn', 'skills', 'start'], response: 'Start by learning business fundamentals through books, online courses, and mentorship. Focus on a few core skills like sales, marketing, or finance, and learn the rest as you go.' },
+                        { keywords: ['portfolio', 'project'], response: 'Your "portfolio" is your business. Showcase the products you have launched, the revenue you have generated, and the problems you have solved for your customers.' }
+                    ]
+                },
+                'Graphic Designer': {
+                    roadmap: [
+                        { title: 'Step 1: Foundational Skills', description: 'Learn core design principles like color theory, typography, layout, and visual hierarchy. Understanding these concepts is essential for creating compelling visuals.' },
+                        { title: 'Step 2: Master Design Software', description: 'Master industry-standard tools like Adobe Creative Suite (Photoshop, Illustrator, InDesign) or modern alternatives like Figma and Canva. Practice regularly to become comfortable with the software.' },
+                        { title: 'Step 3: Build a Diverse Portfolio', description: 'Create a portfolio that showcases your versatility. Include a variety of projects like logos, posters, branding mockups, and social media graphics. A strong portfolio is your most important asset.' },
+                        { title: 'Step 4: Network and Find Opportunities', description: 'Connect with other designers and professionals in the industry. Seek out internships, freelance projects, or entry-level positions to gain real-world experience and build your client base.' }
+                    ],
+                    faq: [
+                        { keywords: ['get', 'experience', 'jobs'], response: 'To get experience, you can take on pro bono work for non-profits, design for a personal project, or create mock-up designs for existing brands to build your portfolio.' },
+                        { keywords: ['learn', 'skills', 'start'], response: 'Start by learning the core principles of design through online tutorials or courses. Then, choose a primary tool like Figma or Photoshop and practice by recreating designs you admire.' },
+                        { keywords: ['portfolio', 'project'], response: 'A graphic designer\'s portfolio should be a showcase of your best work. It should demonstrate your creativity, technical skills, and ability to solve visual problems.' }
+                    ]
+                },
+                'Other': {
+                    roadmap: [
+                        { title: 'Step 1: Research and Education', description: 'Explore educational paths and certifications relevant to your goal. Read industry publications and follow thought leaders.' },
+                        { title: 'Step 2: Skill Development', description: 'Acquire the necessary skills. This could be through online courses, workshops, or practical application. Focus on what you enjoy.' },
+                        { title: 'Step 3: Networking and Experience', description: 'Connect with professionals in your desired field. Look for internships, volunteer opportunities, or entry-level positions to gain hands-on experience.' }
+                    ],
+                    faq: [
+                        { keywords: ['get', 'experience', 'jobs'], response: 'Look for internships, volunteer opportunities, or entry-level positions in your desired field. These roles are invaluable for gaining hands-on experience.' },
+                        { keywords: ['learn', 'skills', 'start'], response: 'To get started, search for highly-rated online courses or bootcamps in your chosen field. Building small projects is the most effective way to apply your knowledge.' },
+                        { keywords: ['portfolio', 'project'], response: 'A professional portfolio is key. Showcase your best work, whether it is from academic projects, personal creations, or past work experiences.' }
+                    ]
+                }
+            };
+
+            // --- State Variables ---
+            let currentQuestionIndex = 0;
+            let userAnswers = {};
+            const questions = [
+                {
+                    key: 'goal',
+                    text: 'What is your dream career goal?',
+                    type: 'multiple-choice',
+                    options: ['Software Engineering', 'Data Science', 'UX/UI Design', 'Digital Marketing', 'Product Management', 'Financial Analyst', 'Doctor', 'Manager', 'Chartered Accountant (CA)', 'Lawyer', 'Judge', 'Teacher', 'Businessman', 'Graphic Designer', 'Other']
+                },
+                {
+                    key: 'current_status',
+                    text: 'What is your current career status?',
+                    type: 'multiple-choice',
+                    options: ['High School Student', 'College Student', 'College Graduate', 'Working Professional']
+                },
+                {
+                    key: 'skills',
+                    text: 'What skills do you have that are relevant to this career?',
+                    type: 'text'
+                },
+                {
+                    key: 'timeframe',
+                    text: 'What is your ideal timeframe for achieving this goal?',
+                    type: 'text'
+                }
+            ];
+
+            // --- Functions ---
+            const showMessage = (message) => {
+                messageText.textContent = message;
+                messageBox.classList.remove('hidden');
+            };
+
+            const hideMessage = () => {
+                messageBox.classList.add('hidden');
+            };
+
+            const renderQuestion = () => {
+                const question = questions[currentQuestionIndex];
+                questionNumberSpan.textContent = currentQuestionIndex + 1;
+                questionText.textContent = question.text;
+                
+                optionsContainer.innerHTML = '';
+                answerInput.value = '';
+
+                if (question.type === 'text') {
+                    answerInput.classList.remove('hidden');
+                    optionsContainer.classList.add('hidden');
+                } else if (question.type === 'multiple-choice') {
+                    answerInput.classList.add('hidden');
+                    optionsContainer.classList.remove('hidden');
+                    question.options.forEach(option => {
+                        const button = document.createElement('button');
+                        button.textContent = option;
+                        button.className = 'py-3 px-6 rounded-lg border transition duration-200 text-center bg-gray-100 text-gray-800 border-gray-200 hover:bg-blue-100 hover:border-blue-500 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-blue-900 dark:hover:border-blue-500';
+                        button.onclick = () => {
+                            document.querySelectorAll('#options-container button').forEach(btn => {
+                                btn.classList.remove('selected-option');
+                            });
+                            button.classList.add('selected-option');
+                            answerInput.value = option;
+                        };
+                        optionsContainer.appendChild(button);
+                    });
+                }
+            };
+
+            const generateRoadmap = () => {
+                const { goal, current_status, skills } = userAnswers;
+                const data = careerData[goal] || careerData['Other'];
+
+                let roadmapHtml = `<p class="mb-4 text-gray-500 dark:text-gray-400">Based on your answers, here is a suggested roadmap to help you achieve your career goals.</p>`;
+                data.roadmap.forEach(step => {
+                    roadmapHtml += `
+                        <div class="p-6 border roadmap-card">
+                            <h4 class="text-xl font-bold mb-2 text-blue-600 dark:text-blue-400">${step.title}</h4>
+                            <p>${step.description}</p>
+                        </div>
+                    `;
+                });
+                roadmapContent.innerHTML = roadmapHtml;
+            };
+
+            const addChatMessage = (message, sender) => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `p-3 my-2 rounded-lg max-w-xs ${sender === 'user' ? 'user-chat-bubble ml-auto' : 'bot-chat-bubble mr-auto'}`;
+                messageDiv.textContent = message;
+                chatBox.appendChild(messageDiv);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            };
+
+            const handleFollowUpQuestion = (question) => {
+                addChatMessage(question, 'user');
+                followUpInput.value = '';
+                askText.classList.add('hidden');
+                askSpinner.classList.remove('hidden');
+                askBtn.disabled = true;
+
+                setTimeout(() => {
+                    const data = careerData[userAnswers.goal] || careerData['Other'];
+                    let response = "I'm sorry, I don't have a specific answer for that. Please try asking about skills, experience, or projects.";
+                    const lowerCaseQ = question.toLowerCase();
+
+                    for (const qa of data.faq) {
+                        if (qa.keywords.some(keyword => lowerCaseQ.includes(keyword))) {
+                            response = qa.response;
+                            break;
+                        }
+                    }
+
+                    addChatMessage(response, 'bot');
+                    askText.classList.remove('hidden');
+                    askSpinner.classList.add('hidden');
+                    askBtn.disabled = false;
+                }, 1500);
+            };
+
+            // --- Event Listeners ---
+            startBtn.addEventListener('click', () => {
+                welcomeScreen.classList.add('hidden');
+                qnaSection.classList.remove('hidden');
+                renderQuestion();
+            });
+
+            nextBtn.addEventListener('click', () => {
+                const currentQuestion = questions[currentQuestionIndex];
+                const answer = answerInput.value.trim();
+                
+                if (answer === '') {
+                    showMessage("Please provide an answer to continue.");
+                    return;
+                }
+
+                userAnswers[currentQuestion.key] = answer;
+                currentQuestionIndex++;
+
+                if (currentQuestionIndex < questions.length) {
+                    qnaSection.classList.remove('question-transition');
+                    void qnaSection.offsetWidth; // Force reflow
+                    renderQuestion();
+                    qnaSection.classList.add('question-transition');
+                } else {
+                    qnaSection.classList.add('hidden');
+                    roadmapSection.classList.remove('hidden');
+                    generateRoadmap();
+                }
+            });
+
+            followUpInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    if (followUpInput.value.trim() !== '') {
+                        handleFollowUpQuestion(followUpInput.value.trim());
+                    }
+                }
+            });
+
+            askBtn.addEventListener('click', () => {
+                if (followUpInput.value.trim() !== '') {
+                    handleFollowUpQuestion(followUpInput.value.trim());
+                }
+            });
+
+            messageCloseBtn.addEventListener('click', hideMessage);
+        });
+    </script>
+</body>
+</html>

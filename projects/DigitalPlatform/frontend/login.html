@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NextEd - Login</title>
+    <!-- Include Tailwind CSS from CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font - Poppins, consistent with the dashboard design -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles to create the "glass card" effect and other visual enhancements */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #111827;
+            color: #d1d5db; /* Light gray text for contrast on dark background */
+        }
+        
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            background: radial-gradient(circle, rgba(31, 41, 55, 1) 0%, rgba(17, 24, 39, 1) 100%);
+        }
+
+        /* Glass effect for the main login card, consistent with the dashboard's design */
+        .glass-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        /* Styling the buttons to match the dashboard's design */
+        .tab-button {
+            border-radius: 0.75rem;
+            font-weight: 600;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+            border: none;
+            outline: none;
+        }
+
+        .tab-button.active {
+            background-color: #3b82f6; /* Tailwind's primary blue */
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.4);
+        }
+
+        /* General form input styling for a clean look */
+        .input-group input {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 0.5rem;
+            color: white;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+
+        .submit-button {
+            border-radius: 0.75rem;
+            background-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .submit-button:hover {
+            background-color: #2563eb;
+        }
+        
+        /* Message container and spinner styles remain the same for consistent feedback */
+        .message-container {
+            position: fixed;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            z-index: 1000;
+        }
+        .message {
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: opacity 0.3s ease-in-out;
+            opacity: 1;
+        }
+        .message.success {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        .message.error {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #ffffff;
+            border-radius: 50%;
+            width: 1.5rem;
+            height: 1.5rem;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .tab-selector{ 
+            gap: 1rem;
+        }
+        .logo img{
+            width: 200px;
+            height: 80px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card glass-card max-w-lg w-full p-8 md:p-12 flex flex-col items-center relative">
+            <!-- Back Button -->
+            <button id="back-button" class="absolute top-4 left-4 p-2 rounded-full text-white hover:bg-white hover:text-gray-800 transition-colors duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
+            
+            <!-- Logo and Text -->
+            <div class="logo"><img src="assets/NextEd4.png" alt="" class="h-16 w-16 mb-2"></div>
+            <!-- <h1 class="text-3xl font-bold text-white mt-2">NextEd</h1> -->
+            <p class="text-gray-400 mb-8">Your learning journey starts here.</p>
+            
+            <div class="tab-selector mb-8 w-full flex rounded-xl overflow-hidden border border-gray-700 p-1">
+                <button class="tab-button active w-1/2 py-2" id="student-tab">Student</button>
+                <button class="tab-button w-1/2 py-2" id="teacher-tab">Teacher</button>
+            </div>
+
+            <form id="student-login-form" class="login-form active w-full">
+                <div class="input-group flex flex-col mb-4">
+                    <label for="student-loginId" class="text-gray-300 mb-2">Email or Phone:</label>
+                    <input type="text" id="student-loginId" class="px-4 py-3" placeholder="Enter your email or phone" required>
+                </div>
+                <button type="submit" class="submit-button get-otp-button w-full py-3 mb-4">Get OTP</button>
+                <div class="input-group otp-input-group flex flex-col mb-4" style="display: none;">
+                    <label for="student-otp" class="text-gray-300 mb-2">OTP:</label>
+                    <input type="text" id="student-otp" class="px-4 py-3" placeholder="Enter OTP" maxlength="6">
+                </div>
+                <button type="button" class="submit-button verify-otp-button w-full py-3" style="display: none;">Verify OTP & Login</button>
+            </form>
+
+            <form id="teacher-login-form" class="login-form w-full" style="display: none;">
+                <div class="input-group flex flex-col mb-4">
+                    <label for="teacher-email" class="text-gray-300 mb-2">Teacher Email:</label>
+                    <input type="email" id="teacher-email" class="px-4 py-3" placeholder="Enter your email" required>
+                </div>
+                <div class="input-group flex flex-col mb-4">
+                    <label for="teacher-password" class="text-gray-300 mb-2">Password:</label>
+                    <input type="password" id="teacher-password" class="px-4 py-3" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="submit-button w-full py-3">Login</button>
+            </form>
+        </div>
+    </div>
+    <div id="message-container" class="message-container"></div>
+
+    <script>
+       // ...existing code...
+    
+        // API endpoint remains the same, assuming it's a local server
+        const API_BASE_URL = 'http://localhost:5000/api';
+        const messageContainer = document.getElementById('message-container');
+
+        // Utility function to show messages
+        function showMessage(msg, type = 'success') {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.textContent = msg;
+            messageContainer.appendChild(messageDiv);
+            setTimeout(() => {
+                messageDiv.style.opacity = '0';
+                setTimeout(() => messageDiv.remove(), 300);
+            }, 3000);
+        }
+
+        // improved request helper that safely parses JSON or returns text
+        async function requestJson(url, options) {
+            const res = await fetch(url, options);
+            const text = await res.text();
+            let data;
+            try {
+                data = text ? JSON.parse(text) : {};
+            } catch {
+                data = { msg: text || res.statusText || 'No response body' };
+            }
+            return { ok: res.ok, status: res.status, statusText: res.statusText, data };
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const backButton = document.getElementById('back-button');
+            const studentTab = document.getElementById('student-tab');
+            const teacherTab = document.getElementById('teacher-tab');
+            
+            const studentLoginForm = document.getElementById('student-login-form');
+            const teacherLoginForm = document.getElementById('teacher-login-form');
+
+            const studentLoginIdInput = document.getElementById('student-loginId');
+            const studentOtpInputGroup = studentLoginForm.querySelector('.otp-input-group');
+            const studentOtpInput = document.getElementById('student-otp');
+            const studentGetOtpButton = studentLoginForm.querySelector('.get-otp-button');
+            const studentVerifyOtpButton = studentLoginForm.querySelector('.verify-otp-button');
+            
+            const teacherEmailInput = document.getElementById('teacher-email');
+            const teacherPasswordInput = document.getElementById('teacher-password');
+            const teacherLoginButton = teacherLoginForm.querySelector('.submit-button');
+
+            // Go back functionality
+            backButton.addEventListener('click', () => {
+                window.history.back();
+            });
+
+            // Tab switching logic
+            studentTab.addEventListener('click', () => {
+                studentTab.classList.add('active');
+                teacherTab.classList.remove('active');
+                studentLoginForm.style.display = 'block';
+                teacherLoginForm.style.display = 'none';
+            });
+
+            teacherTab.addEventListener('click', () => {
+                teacherTab.classList.add('active');
+                studentTab.classList.remove('active');
+                teacherLoginForm.style.display = 'block';
+                studentLoginForm.style.display = 'none';
+            });
+
+            // Student OTP Request
+            studentGetOtpButton.addEventListener('click', async (e) => {
+                e.preventDefault();
+                const loginId = studentLoginIdInput.value;
+                if (!loginId) {
+                    showMessage('Please enter your email or phone number.', 'error');
+                    return;
+                }
+
+                studentGetOtpButton.innerHTML = '<div class="loading-spinner"></div>';
+                studentGetOtpButton.disabled = true;
+
+                try {
+                    const result = await requestJson(`${API_BASE_URL}/auth/student/request-otp`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ loginId })
+                    });
+
+                    console.log('OTP request response', result);
+                    if (result.ok) {
+                        showMessage(result.data.msg || 'OTP sent', 'success');
+                        studentOtpInputGroup.style.display = 'flex';
+                        studentVerifyOtpButton.style.display = 'block';
+                        studentGetOtpButton.style.display = 'none';
+                    } else {
+                        showMessage(`Server ${result.status}: ${result.data.msg || result.statusText}`, 'error');
+                    }
+                } catch (err) {
+                    console.error('Network or parsing error', err);
+                    showMessage('Network error. Check server or CORS.', 'error');
+                } finally {
+                    studentGetOtpButton.innerHTML = 'Get OTP';
+                    studentGetOtpButton.disabled = false;
+                }
+            });
+
+            // Student OTP Verification
+            studentVerifyOtpButton.addEventListener('click', async () => {
+                const loginId = studentLoginIdInput.value;
+                const otp = studentOtpInput.value;
+                if (!otp) {
+                    showMessage('Please enter the OTP.', 'error');
+                    return;
+                }
+
+                studentVerifyOtpButton.innerHTML = '<div class="loading-spinner"></div>';
+                studentVerifyOtpButton.disabled = true;
+
+                try {
+                    const result = await requestJson(`${API_BASE_URL}/auth/student/verify-otp`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ loginId, otp })
+                    });
+
+                    console.log('OTP verify response', result);
+                    if (result.ok) {
+                        localStorage.setItem('token', result.data.token);
+                        showMessage('OTP Verified! Logging in...', 'success');
+                        window.location.href = 'student_dashboard.html';
+                    } else {
+                        showMessage(`Server ${result.status}: ${result.data.msg || result.statusText}`, 'error');
+                    }
+                } catch (err) {
+                    console.error('Network or parsing error', err);
+                    showMessage('An error occurred during verification.', 'error');
+                } finally {
+                    studentVerifyOtpButton.innerHTML = 'Verify OTP & Login';
+                    studentVerifyOtpButton.disabled = false;
+                }
+            });
+
+            // Teacher Login
+            teacherLoginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = teacherEmailInput.value; 
+                const password = teacherPasswordInput.value;
+                
+                teacherLoginButton.innerHTML = '<div class="loading-spinner"></div>';
+                teacherLoginButton.disabled = true;
+
+                try {
+                    const result = await requestJson(`${API_BASE_URL}/auth/teacher/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, password })
+                    });
+
+                    console.log('Teacher login response', result);
+                    if (result.ok) {
+                        localStorage.setItem('token', result.data.token);
+                        showMessage('Teacher Login Successful!', 'success');
+                        window.location.href = 'teacher_dashboard.html';
+                    } else {
+                        showMessage(`Server ${result.status}: ${result.data.msg || result.statusText}`, 'error');
+                    }
+                } catch (err) {
+                    console.error('Network or parsing error', err);
+                    showMessage('An error occurred during login.', 'error');
+                } finally {
+                    teacherLoginButton.innerHTML = 'Login';
+                    teacherLoginButton.disabled = false;
+                }
+            });
+        });
+    </script>
+// ...existing code...
+    
+</body>
+</html>

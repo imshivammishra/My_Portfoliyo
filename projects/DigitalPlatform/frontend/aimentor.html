@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Mentor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+        :root {
+            --background-color: #010409;
+            --chat-bg-color: #0d1117;
+            --border-color: #30363d;
+            --primary-color: #58a6ff;
+            --text-color: #c9d1d9;
+            --user-message-bg: #1f6feb;
+            --assistant-message-bg: #30363d;
+            --button-bg: #21262d;
+            --button-hover-bg: #30363d;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 900px;
+            height: 100%;
+            max-height: 800px;
+            background-color: var(--chat-bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .chat-header h1 {
+            font-size: 1.5em;
+            margin: 0;
+        }
+
+        .chat-header button {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--primary-color);
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .chat-header button:hover {
+            background-color: var(--button-hover-bg);
+            border-color: var(--primary-color);
+        }
+
+        .chat-window {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            scroll-behavior: smooth;
+        }
+
+        .chat-window::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-window::-webkit-scrollbar-thumb {
+            background-color: var(--border-color);
+            border-radius: 4px;
+        }
+
+        .message-bubble {
+            max-width: 80%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            line-height: 1.6;
+            word-wrap: break-word;
+            font-size: 0.95em;
+        }
+
+        .user-message {
+            background-color: var(--user-message-bg);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .assistant-message {
+            background-color: var(--assistant-message-bg);
+            color: var(--text-color);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .assistant-message p {
+            margin: 0;
+            padding: 0;
+        }
+
+        .assistant-message pre {
+            background-color: #010409;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px;
+            overflow-x: auto;
+        }
+
+        .assistant-message code {
+            font-family: monospace;
+            font-size: 0.9em;
+            color: #e6edf3;
+        }
+
+        .chat-input {
+            display: flex;
+            align-items: flex-end;
+            padding: 10px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .chat-input textarea {
+            flex-grow: 1;
+            background-color: var(--button-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            border-radius: 8px;
+            padding: 12px;
+            resize: none;
+            min-height: 44px;
+            max-height: 150px;
+            font-size: 1em;
+            line-height: 1.4;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+
+        .chat-input textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: var(--chat-bg-color);
+        }
+
+        .chat-input button {
+            background-color: var(--primary-color);
+            border: none;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: background-color 0.2s, opacity 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 44px;
+            height: 44px;
+        }
+
+        .chat-input button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .chat-input button:hover:not(:disabled) {
+            background-color: #4a90e2;
+        }
+
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Animation Container */
+        .animation-container {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .animation-container .header {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: calc(100% - 40px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .animation-container .header button {
+            background-color: var(--button-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .animation-container .header button:hover {
+            background-color: var(--button-hover-bg);
+        }
+
+        #animation-canvas {
+            background-color: var(--background-color);
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>AI Mentor</h1>
+            <button id="new-chat">New Chat</button>
+        </div>
+        <div class="chat-window" id="chat-window">
+            <div class="message-bubble assistant-message">
+                Hello! I'm ready to help you with your studies! What can I assist you with today? You can ask me to explain concepts or even get feedback on your work! Try typing "feedback on my writing" or "feedback on my code". Let's learn something new and exciting!
+            </div>
+        </div>
+        <div class="chat-input">
+            <textarea id="query-input" placeholder="Ask a question or request an animation..." rows="1"></textarea>
+            <button id="main-button"><i class="fas fa-paper-plane"></i></button>
+        </div>
+
+        <div class="animation-container" id="animation-container">
+            <div class="header">
+                <button id="back-to-chat">Back to Chat</button>
+            </div>
+            <canvas id="animation-canvas"></canvas>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatWindow = document.getElementById('chat-window');
+            const queryInput = document.getElementById('query-input');
+            const mainButton = document.getElementById('main-button');
+            const animationContainer = document.getElementById('animation-container');
+            const animationCanvas = document.getElementById('animation-canvas');
+            const backToChatButton = document.getElementById('back-to-chat');
+            const newChatButton = document.getElementById('new-chat');
+            const ctx = animationCanvas.getContext('2d');
+            const TEXT_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=AIzaSyDOovAwXGoQNaO8HMGshqEo3Oum-aCVcUs';
+            const SYSTEM_INSTRUCTION = `You are an educational assistant. Your goal is to provide concise, accurate, and easy-to-understand explanations for scientific and mathematical concepts. You should:
+            - Respond to user queries with helpful explanations.
+            - If a user asks for "feedback," "critique," "check my work," or a similar phrase, respond with a pre-written, encouraging message.
+            - If a user asks to see an anaimation for a specific topic, do not provide an explanation. Respond with only a single keyword that matches one of the animation topics. The keywords are: 'solar system', 'projectile motion', 'simple harmonic motion', 'energy conservation', 'ohm's law', 'wave', 'molecules', 'mitosis', 'photosynthesis', 'bubble sort', 'graphing'.
+            - Your responses should be formatted using Markdown. Use LaTeX for mathematical and scientific notation.`;
+            
+            // Local data for quick responses without API calls
+            const animationKeywords = {
+                'solar system': 'science:solar',
+                'planets': 'science:solar',
+                'projectile motion': 'physics:projectile',
+                'shm': 'physics:shm',
+                'simple harmonic motion': 'physics:shm',
+                'energy conservation': 'physics:energy',
+                'roller coaster': 'physics:energy',
+                "ohm's law": 'physics:ohm',
+                'circuit': 'physics:ohm',
+                'waves': 'physics:waves',
+                'sound wave': 'physics:waves',
+                'molecules': 'chemistry:molecules',
+                'particles': 'chemistry:molecules',
+                'mitosis': 'biology:mitosis',
+                'cell division': 'biology:mitosis',
+                'photosynthesis': 'biology:photosynthesis',
+                'bubble sort': 'cs:bubblesort',
+                'sorting algorithm': 'cs:bubblesort',
+                'graph': 'mathematics:graph',
+                'graphing': 'mathematics:graph'
+            };
+
+            const localFeedbackData = {
+                'feedback': "Thank you for sharing your work! I can't directly check files or images, but I can offer some tips on how to improve. To get the best feedback, try to be as specific as possible in your prompts. For writing, you could ask, 'Can you help me brainstorm ideas for an essay about [Topic]?' or 'How can I make my conclusion stronger?' For coding, try asking about a specific concept, like 'What's the best way to handle errors in JavaScript?' This way, I can give you the most relevant and helpful advice!",
+                'critique': "Thank you for sharing your work! I can't directly check files or images, but I can offer some tips on how to improve. To get the best feedback, try to be as specific as possible in your prompts. For writing, you could ask, 'Can you help me brainstorm ideas for an essay about [Topic]?' or 'How can I make my conclusion stronger?' For coding, try asking about a specific concept, like 'What's the best way to handle errors in JavaScript?' This way, I can give you the most relevant and helpful advice!",
+                'check my work': "Thank you for sharing your work! I can't directly check files or images, but I can offer some tips on how to improve. To get the best feedback, try to be as specific as possible in your prompts. For writing, you could ask, 'Can you help me brainstorm ideas for an essay about [Topic]?' or 'How can I make my conclusion stronger?' For coding, try asking about a specific concept, like 'What's the best way to handle errors in JavaScript?' This way, I can give you the most relevant and helpful advice!"
+            };
+
+            let animationFrameId = null;
+            let currentAnimationData = {};
+            let animationTime = 0;
+
+            // --- Helper Functions ---
+
+            function getMatchingAnimationTopic(query) {
+                for (const [key, value] of Object.entries(animationKeywords)) {
+                    if (query.includes(key)) {
+                        return value;
+                    }
+                }
+                return null;
+            }
+
+            function addMessage(sender, message) {
+                const messageBubble = document.createElement('div');
+                messageBubble.classList.add('message-bubble');
+                if (sender === 'user') {
+                    messageBubble.classList.add('user-message');
+                } else {
+                    messageBubble.classList.add('assistant-message');
+                }
+                messageBubble.innerHTML = message;
+                chatWindow.appendChild(messageBubble);
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+                return messageBubble;
+            }
+
+            function setButtonState(isLoading) {
+                mainButton.disabled = isLoading;
+                mainButton.innerHTML = isLoading ? '<div class="loading-spinner"></div>' : '<i class="fas fa-paper-plane"></i>';
+            }
+
+            async function fetchWithRetry(url, options, retries = 3) {
+                for (let i = 0; i < retries; i++) {
+                    try {
+                        const response = await fetch(url, options);
+                        if (response.ok) return response;
+                        if (response.status === 429) {
+                            const delay = Math.pow(2, i) * 1000;
+                            console.warn(`Rate limit exceeded. Retrying in ${delay}ms...`);
+                            await new Promise(resolve => setTimeout(resolve, delay));
+                        } else {
+                            throw new Error(`API error: ${response.statusText}`);
+                        }
+                    } catch (error) {
+                        if (i === retries - 1) throw error;
+                    }
+                }
+            }
+
+            // --- Animation Logic ---
+
+            function showAnimation(topic) {
+                cancelAnimationFrame(animationFrameId);
+                animationContainer.style.display = 'flex';
+                chatWindow.style.display = 'none';
+                
+                const rect = animationCanvas.parentElement.getBoundingClientRect();
+                animationCanvas.width = rect.width;
+                animationCanvas.height = rect.height;
+
+                currentAnimationData = initializeAnimationData(topic);
+                animationTime = 0;
+                animationLoop();
+            }
+
+            function hideAnimation() {
+                cancelAnimationFrame(animationFrameId);
+                animationContainer.style.display = 'none';
+                chatWindow.style.display = 'flex';
+            }
+
+            function initializeAnimationData(topic) {
+                switch (topic) {
+                    case 'science:solar':
+                        return {
+                            planets: [
+                                { name: 'Sun', radius: 0, size: 30, color: '#FFD700', speed: 0, initialAngle: 0 },
+                                { name: 'Mercury', radius: 40, size: 4, color: '#A9A9A9', speed: 1.6, initialAngle: 0 },
+                                { name: 'Venus', radius: 60, size: 6, color: '#FFDAB9', speed: 1.2, initialAngle: 1 },
+                                { name: 'Earth', radius: 90, size: 7, color: '#4169E1', speed: 1.0, initialAngle: 2 },
+                                { name: 'Mars', radius: 120, size: 5, color: '#DC143C', speed: 0.8, initialAngle: 3 },
+                                { name: 'Jupiter', radius: 180, size: 15, color: '#A0522D', speed: 0.4, initialAngle: 4 },
+                                { name: 'Saturn', radius: 220, size: 12, color: '#F4A460', speed: 0.3, initialAngle: 5 },
+                                { name: 'Uranus', radius: 250, size: 10, color: '#B0E0E6', speed: 0.2, initialAngle: 6 },
+                                { name: 'Neptune', radius: 280, size: 10, color: '#4682B4', speed: 0.1, initialAngle: 7 }
+                            ]
+                        };
+                    case 'physics:projectile':
+                        return {
+                            initialX: animationCanvas.width / 4,
+                            initialY: animationCanvas.height - 20,
+                            initialVelocityX: 5,
+                            initialVelocityY: 15,
+                            gravity: 9.8,
+                            time: 0,
+                            x: 0,
+                            y: 0
+                        };
+                    case 'physics:shm':
+                        return {
+                            amplitude: 150,
+                            frequency: 0.05,
+                            x: 0
+                        };
+                    case 'physics:energy':
+                        return {
+                            time: 0
+                        };
+                    case 'physics:ohm':
+                        const electrons = [];
+                        for (let i = 0; i < 20; i++) {
+                            electrons.push({ time: Math.random() * 4 });
+                        }
+                        return {
+                            electrons: electrons,
+                            speed: 0.01
+                        };
+                    case 'physics:waves':
+                        return {
+                            amplitude: 50,
+                            wavelength: 150,
+                            speed: 0.01
+                        };
+                    case 'chemistry:molecules':
+                        const molecules = [];
+                        for (let i = 0; i < 50; i++) {
+                            molecules.push({
+                                x: Math.random() * animationCanvas.width,
+                                y: Math.random() * animationCanvas.height,
+                                vx: (Math.random() - 0.5) * 2,
+                                vy: (Math.random() - 0.5) * 2,
+                                size: Math.random() * 5 + 3,
+                                color: `hsl(${Math.random() * 360}, 70%, 50%)`
+                            });
+                        }
+                        return { molecules: molecules };
+                    case 'mathematics:graph':
+                        return { function: 'Math.sin(x)', time: 0 };
+                    case 'biology:mitosis':
+                        return { time: 0, stage: 0 };
+                    case 'biology:photosynthesis':
+                        return { time: 0, sunlight: [], co2: [] };
+                    case 'cs:bubblesort':
+                        return {
+                            array: [5, 3, 8, 4, 2, 7, 1, 6],
+                            i: 0,
+                            j: 0,
+                            swapped: false,
+                            completed: false
+                        };
+                    default:
+                        return {};
+                }
+            }
+
+            function animationLoop(time) {
+                const { width, height } = animationCanvas;
+                const centerX = width / 2;
+                const centerY = height / 2;
+                const data = currentAnimationData;
+                const topic = getMatchingAnimationTopic(queryInput.value.toLowerCase());
+                
+                // Clear canvas
+                ctx.fillStyle = '#010409';
+                ctx.fillRect(0, 0, width, height);
+
+                switch (topic) {
+                    case 'science:solar':
+                        data.planets.forEach((planet, index) => {
+                            if (index === 0) return; // Skip sun
+                            const angle = (time * planet.speed * 0.1) + planet.initialAngle;
+                            const x = centerX + Math.cos(angle) * planet.radius;
+                            const y = centerY + Math.sin(angle) * planet.radius;
+                            ctx.fillStyle = planet.color;
+                            ctx.beginPath();
+                            ctx.arc(x, y, planet.size, 0, 2 * Math.PI);
+                            ctx.fill();
+                            
+                            // Draw orbit path
+                            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                            ctx.lineWidth = 1;
+                            ctx.beginPath();
+                            ctx.arc(centerX, centerY, planet.radius, 0, 2 * Math.PI);
+                            ctx.stroke();
+                        });
+                        break;
+                    case 'physics:projectile':
+                        data.time += 0.05;
+                        data.x = data.initialX + data.initialVelocityX * data.time;
+                        data.y = data.initialY - (data.initialVelocityY * data.time) + (0.5 * data.gravity * data.time * data.time);
+                        if (data.y > animationCanvas.height - 20) {
+                            data.y = animationCanvas.height - 20;
+                            data.x = data.initialX;
+                            data.time = 0;
+                        }
+                        ctx.fillStyle = '#56d364';
+                        ctx.beginPath();
+                        ctx.arc(data.x, data.y, 10, 0, 2 * Math.PI);
+                        ctx.fill();
+                        break;
+                    case 'physics:shm':
+                        data.x = centerX + data.amplitude * Math.cos(data.frequency * time);
+                        ctx.strokeStyle = '#79c0ff';
+                        ctx.lineWidth = 4;
+                        ctx.beginPath();
+                        ctx.moveTo(centerX, centerY - 50);
+                        ctx.lineTo(data.x, centerY - 50);
+                        ctx.stroke();
+                        ctx.fillStyle = '#ffc072';
+                        ctx.beginPath();
+                        ctx.arc(data.x, centerY, 20, 0, 2 * Math.PI);
+                        ctx.fill();
+                        break;
+                    case 'physics:energy':
+                        data.time += 0.05;
+                        const trackY = centerY + 50 + 50 * Math.sin(data.time);
+                        const ballX = centerX + 100 * Math.cos(data.time * 0.5);
+                        const ballY = centerY + 50 - 50 * Math.sin(data.time * 0.5);
+                        
+                        // Drawing the curved track
+                        ctx.strokeStyle = '#30363d';
+                        ctx.lineWidth = 5;
+                        ctx.beginPath();
+                        ctx.moveTo(0, centerY + 50);
+                        for (let x = 0; x < animationCanvas.width; x++) {
+                            const y = centerY + 50 + 50 * Math.sin(x/50);
+                            ctx.lineTo(x, y);
+                        }
+                        ctx.stroke();
+
+                        // Correcting the ball's movement to follow the track
+                        const ballProgress = (time * 0.005) % (animationCanvas.width);
+                        const ballTrackY = centerY + 50 + 50 * Math.sin(ballProgress/50);
+                        
+                        ctx.fillStyle = '#f85149';
+                        ctx.beginPath();
+                        ctx.arc(ballProgress, ballTrackY, 10, 0, 2 * Math.PI);
+                        ctx.fill();
+                        break;
+                    case 'physics:ohm':
+                        const circuitWidth = animationCanvas.width - 100;
+                        const circuitHeight = animationCanvas.height - 100;
+                        const path = [
+                            { x: centerX - circuitWidth / 2, y: centerY - circuitHeight / 2 },
+                            { x: centerX + circuitWidth / 2, y: centerY - circuitHeight / 2 },
+                            { x: centerX + circuitWidth / 2, y: centerY + circuitHeight / 2 },
+                            { x: centerX - circuitWidth / 2, y: centerY + circuitHeight / 2 },
+                        ];
+                        ctx.strokeStyle = '#ccc';
+                        ctx.lineWidth = 5;
+                        ctx.beginPath();
+                        ctx.moveTo(path[0].x, path[0].y);
+                        path.forEach(p => ctx.lineTo(p.x, p.y));
+                        ctx.lineTo(path[0].x, path[0].y);
+                        ctx.stroke();
+
+                        data.electrons.forEach(electron => {
+                            electron.time += data.speed;
+                            const pos = electron.time % 4;
+                            let x, y;
+                            if (pos < 1) { x = path[0].x + pos * circuitWidth; y = path[0].y; } 
+                            else if (pos < 2) { x = path[1].x; y = path[1].y + (pos - 1) * circuitHeight; } 
+                            else if (pos < 3) { x = path[2].x - (pos - 2) * circuitWidth; y = path[2].y; } 
+                            else { x = path[3].x; y = path[3].y - (pos - 3) * circuitHeight; }
+                            ctx.fillStyle = '#c9d1d9';
+                            ctx.beginPath();
+                            ctx.arc(x, y, 4, 0, 2 * Math.PI);
+                            ctx.fill();
+                        });
+                        break;
+                    case 'physics:waves':
+                        const amplitude = data.amplitude;
+                        const wavelength = data.wavelength;
+                        const speed = data.speed;
+                        ctx.strokeStyle = '#79c0ff';
+                        ctx.lineWidth = 3;
+                        ctx.beginPath();
+                        ctx.moveTo(0, centerY);
+
+                        for(let x = 0; x < animationCanvas.width; x++) {
+                            const y = centerY + amplitude * Math.sin(2 * Math.PI * (x/wavelength - time * speed));
+                            ctx.lineTo(x, y);
+                        }
+                        ctx.stroke();
+                        break;
+                    case 'chemistry:molecules':
+                        data.molecules.forEach(mol => {
+                            mol.x += mol.vx;
+                            mol.y += mol.vy;
+                            if (mol.x > animationCanvas.width || mol.x < 0) mol.vx *= -1;
+                            if (mol.y > animationCanvas.height || mol.y < 0) mol.vy *= -1;
+                            ctx.fillStyle = mol.color;
+                            ctx.beginPath();
+                            ctx.arc(mol.x, mol.y, mol.size, 0, 2 * Math.PI);
+                            ctx.fill();
+                        });
+                        break;
+                    case 'mathematics:graph':
+                        const scale = 50;
+                        ctx.strokeStyle = '#30363d';
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.moveTo(centerX, 0); ctx.lineTo(centerX, animationCanvas.height);
+                        ctx.moveTo(0, centerY); ctx.lineTo(animationCanvas.width, centerY);
+                        ctx.stroke();
+
+                        ctx.strokeStyle = '#58a6ff';
+                        ctx.lineWidth = 3;
+                        ctx.beginPath();
+                        try {
+                            for (let i = -animationCanvas.width / 2; i <= animationCanvas.width / 2; i++) {
+                                const x = centerX + i;
+                                const y = centerY - eval(data.function.replace(/x/g, `(${i} / ${scale})`)) * scale;
+                                if (i === -animationCanvas.width / 2) { ctx.moveTo(x, y); } 
+                                else { ctx.lineTo(x, y); }
+                            }
+                            ctx.stroke();
+                        } catch (e) { console.error("Error drawing graph:", e); }
+                        break;
+                    case 'biology:mitosis':
+                        data.time += 0.01;
+                        const numChromosomes = 8;
+                        const chromosomeRadius = 8;
+                        const spindleColor = '#79c0ff';
+                        
+                        // Stage 0: Prophase
+                        if (data.time < 2) {
+                            data.stage = 0;
+                            ctx.font = '24px Inter';
+                            ctx.fillStyle = '#c9d1d9';
+                            ctx.textAlign = 'center';
+                            ctx.fillText('Prophase', centerX, centerY - 150);
+                            for (let i = 0; i < numChromosomes; i++) {
+                                const angle = (i / numChromosomes) * Math.PI * 2 + data.time * 2;
+                                const x = centerX + Math.cos(angle) * 50;
+                                const y = centerY + Math.sin(angle) * 50;
+                                ctx.fillStyle = `hsl(${(i * 360) / numChromosomes}, 70%, 50%)`;
+                                ctx.beginPath();
+                                ctx.arc(x, y, chromosomeRadius, 0, 2 * Math.PI);
+                                ctx.fill();
+                            }
+                        } 
+                        // Stage 1: Metaphase
+                        else if (data.time < 4) {
+                            data.stage = 1;
+                            ctx.font = '24px Inter';
+                            ctx.fillStyle = '#c9d1d9';
+                            ctx.textAlign = 'center';
+                            ctx.fillText('Metaphase', centerX, centerY - 150);
+                            for (let i = 0; i < numChromosomes; i++) {
+                                const x = centerX;
+                                const y = centerY - 50 + (i / (numChromosomes-1)) * 100;
+                                ctx.fillStyle = `hsl(${(i * 360) / numChromosomes}, 70%, 50%)`;
+                                ctx.beginPath();
+                                ctx.arc(x, y, chromosomeRadius, 0, 2 * Math.PI);
+                                ctx.fill();
+                            }
+                        }
+                        // Stage 2: Anaphase
+                        else if (data.time < 6) {
+                            data.stage = 2;
+                            ctx.font = '24px Inter';
+                            ctx.fillStyle = '#c9d1d9';
+                            ctx.textAlign = 'center';
+                            ctx.fillText('Anaphase', centerX, centerY - 150);
+                            for (let i = 0; i < numChromosomes; i++) {
+                                const progress = (data.time - 4) / 2;
+                                const initialY = centerY - 50 + (i / (numChromosomes-1)) * 100;
+                                const x = centerX;
+                                const y = initialY + (i % 2 === 0 ? progress * 100 : -progress * 100);
+                                ctx.fillStyle = `hsl(${(i * 360) / numChromosomes}, 70%, 50%)`;
+                                ctx.beginPath();
+                                ctx.arc(x, y, chromosomeRadius, 0, 2 * Math.PI);
+                                ctx.fill();
+                            }
+                        }
+                        // Stage 3: Telophase
+                        else {
+                            data.stage = 3;
+                            ctx.font = '24px Inter';
+                            ctx.fillStyle = '#c9d1d9';
+                            ctx.textAlign = 'center';
+                            ctx.fillText('Telophase', centerX, centerY - 150);
+                            for (let i = 0; i < numChromosomes; i++) {
+                                const progress = (data.time - 6) / 2;
+                                const initialY = centerY - 50 + (i / (numChromosomes - 1)) * 100;
+                                const x = centerX + (i % 2 === 0 ? progress * 50 : -progress * 50);
+                                const y = initialY;
+                                ctx.fillStyle = `hsl(${(i * 360) / numChromosomes}, 70%, 50%)`;
+                                ctx.beginPath();
+                                ctx.arc(x, y, chromosomeRadius, 0, 2 * Math.PI);
+                                ctx.fill();
+                            }
+                            if (data.time > 8) {
+                                data.time = 0; // Reset animation
+                            }
+                        }
+                        break;
+                    case 'biology:photosynthesis':
+                        data.time += 0.01;
+                        // Sun
+                        ctx.fillStyle = '#ffd700';
+                        ctx.beginPath();
+                        ctx.arc(centerX - 200, centerY - 150, 40, 0, 2 * Math.PI);
+                        ctx.fill();
+                        // Plant
+                        ctx.fillStyle = '#56d364';
+                        ctx.beginPath();
+                        ctx.moveTo(centerX, centerY + 100);
+                        ctx.bezierCurveTo(centerX + 50, centerY - 50, centerX + 150, centerY - 20, centerX + 150, centerY);
+                        ctx.bezierCurveTo(centerX + 150, centerY - 50, centerX + 50, centerY - 150, centerX, centerY - 100);
+                        ctx.bezierCurveTo(centerX - 50, centerY - 150, centerX - 150, centerY - 50, centerX - 150, centerY);
+                        ctx.bezierCurveTo(centerX - 150, centerY - 20, centerX - 50, centerY - 50, centerX, centerY + 100);
+                        ctx.fill();
+                        // Sunlight particles
+                        if (Math.random() > 0.95) {
+                            data.sunlight.push({ x: centerX - 200, y: centerY - 150, vx: 1, vy: 1 });
+                        }
+                        data.sunlight.forEach((p, i) => {
+                            p.x += p.vx * 3;
+                            p.y += p.vy * 3;
+                            ctx.fillStyle = 'yellow';
+                            ctx.beginPath();
+                            ctx.arc(p.x, p.y, 2, 0, 2 * Math.PI);
+                            ctx.fill();
+                            if (p.x > animationCanvas.width || p.y > animationCanvas.height) {
+                                data.sunlight.splice(i, 1);
+                            }
+                        });
+                        // CO2 particles
+                        if (Math.random() > 0.95) {
+                            data.co2.push({ x: animationCanvas.width, y: centerY + 50, vx: -1, vy: 0 });
+                        }
+                        data.co2.forEach((p, i) => {
+                            p.x += p.vx * 2;
+                            ctx.fillStyle = 'gray';
+                            ctx.beginPath();
+                            ctx.arc(p.x, p.y, 3, 0, 2 * Math.PI);
+                            ctx.fill();
+                            if (p.x < centerX - 100) {
+                                data.co2.splice(i, 1);
+                            }
+                        });
+                        break;
+                    case 'cs:bubblesort':
+                        const barWidth = 20;
+                        const spacing = 5;
+                        const startX = centerX - (data.array.length * (barWidth + spacing)) / 2;
+                        
+                        if (!data.swapped && data.i > 0) {
+                            data.completed = true;
+                        }
+
+                        if (!data.completed) {
+                            if (data.j < data.array.length - data.i - 1) {
+                                if (data.array[data.j] > data.array[data.j + 1]) {
+                                    [data.array[data.j], data.array[data.j + 1]] = [data.array[data.j + 1], data.array[data.j]];
+                                    data.swapped = true;
+                                }
+                                data.j++;
+                            } else {
+                                data.j = 0;
+                                data.i++;
+                                if (!data.swapped) {
+                                    data.completed = true;
+                                }
+                                data.swapped = false;
+                            }
+                        }
+
+                        for (let k = 0; k < data.array.length; k++) {
+                            const barHeight = data.array[k] * 10;
+                            let barColor = '#58a6ff';
+                            if (data.completed) {
+                                barColor = '#56d364'; 
+                            } else if (k === data.j || k === data.j + 1) {
+                                barColor = '#f85149';
+                            }
+                            
+                            ctx.fillStyle = barColor;
+                            ctx.fillRect(startX + k * (barWidth + spacing), animationCanvas.height - barHeight - 50, barWidth, barHeight);
+                            
+                            ctx.fillStyle = '#c9d1d9';
+                            ctx.textAlign = 'center';
+                            ctx.font = '12px Inter';
+                            ctx.fillText(data.array[k], startX + k * (barWidth + spacing) + barWidth / 2, animationCanvas.height - 30);
+                        }
+                        break;
+                }
+                
+                animationFrameId = requestAnimationFrame(animationLoop);
+            }
+
+            async function handleQuery(query) {
+                const normalizedQuery = query.toLowerCase().trim();
+                
+                // Add the user message immediately
+                addMessage('user', query);
+                
+                // Create a loading message placeholder
+                const loadingMessage = addMessage('assistant', '<div class="loading-spinner"></div>');
+                
+                setButtonState(true);
+                
+                // 1. Check for animation keywords
+                const animationTopic = getMatchingAnimationTopic(normalizedQuery);
+                if (animationTopic) {
+                    loadingMessage.remove(); // Remove the loading spinner
+                    showAnimation(animationTopic);
+                    setButtonState(false);
+                    return;
+                }
+                
+                // 2. Check for feedback keywords
+                let feedbackQuery = null;
+                for (const key in localFeedbackData) {
+                    if (normalizedQuery.includes(key)) {
+                        feedbackQuery = key;
+                        break;
+                    }
+                }
+
+                if (feedbackQuery) {
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    loadingMessage.innerHTML = marked.parse(localFeedbackData[feedbackQuery]);
+                    setButtonState(false);
+                    return;
+                }
+
+                // 3. Fallback to general AI response
+                try {
+                    // Check for API Key presence first
+                    if (TEXT_API_URL.includes('YOUR_API_KEY')) {
+                        throw new Error('Please replace YOUR_API_KEY with your actual API key.');
+                    }
+                    
+                    const payload = {
+                        contents: [{ parts: [{ text: query }] }],
+                        systemInstruction: {
+                            parts: [{ text: SYSTEM_INSTRUCTION }]
+                        }
+                    };
+                    const response = await fetchWithRetry(TEXT_API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+                    let text = result?.candidates?.[0]?.content?.parts?.[0]?.text || 'I could not generate a response. Please try again.';
+                    loadingMessage.innerHTML = marked.parse(text);
+                } catch (error) {
+                    let errorMessage = 'An error occurred while getting the explanation. Please try again.';
+                    if (error.message.includes('API key')) {
+                        errorMessage = 'API Key is missing or invalid. Please replace "YOUR_API_KEY" in the code with your actual key.';
+                    } else if (error.message.includes('API error')) {
+                        errorMessage = `API error: The API returned an error. Please check the browser console for details and ensure your API key is correct and not rate-limited.`;
+                    } else if (error.message.includes('blocked by CORS policy')) {
+                         errorMessage = `CORS Error: This often happens when running a file directly. Please use a local server to run this file (e.g., Python's http.server) to fix it.`;
+                    }
+                    loadingMessage.innerHTML = errorMessage;
+                    console.error('Explanation fetch error:', error);
+                } finally {
+                    setButtonState(false);
+                }
+            }
+            
+            // --- Event Listeners ---
+            mainButton.addEventListener('click', () => {
+                const query = queryInput.value.trim();
+                if (!query) return;
+
+                queryInput.value = '';
+                handleQuery(query);
+            });
+
+            backToChatButton.addEventListener('click', hideAnimation);
+
+            queryInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    mainButton.click();
+                }
+            });
+            
+            queryInput.addEventListener('input', () => {
+                const query = queryInput.value.trim().toLowerCase();
+                const animationTopic = getMatchingAnimationTopic(query);
+                if (animationTopic) {
+                     mainButton.innerHTML = `<i class="fas fa-play"></i>`;
+                } else {
+                     mainButton.innerHTML = `<i class="fas fa-paper-plane"></i>`;
+                }
+            });
+
+            // New Chat button
+            newChatButton.addEventListener('click', () => {
+                chatWindow.innerHTML = `
+                    <div class="message-bubble assistant-message">
+                        Hello! I'm ready to help you with your studies! What can I assist you with today? You can ask me to explain concepts or even get feedback on your work! Try typing "feedback on my writing" or "feedback on my code". Let's learn something new and exciting!
+                    </div>
+                `;
+                hideAnimation();
+            });
+
+            // Auto-resize textarea
+            queryInput.addEventListener('input', () => {
+                queryInput.style.height = 'auto';
+                queryInput.style.height = queryInput.scrollHeight + 'px';
+            });
+        });
+    </script>
+</body>
+</html>

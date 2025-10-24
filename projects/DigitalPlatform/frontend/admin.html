@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NextEd - Teacher Registration</title>
+    <!-- Google Font - Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #111827;
+            color: #d1d5db;
+        }
+
+        .register-container {
+            min-height: 100vh;
+            padding: 1.5rem;
+            position: relative;
+            background: radial-gradient(circle, rgba(31, 41, 55, 1) 0%, rgba(17, 24, 39, 1) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .glass-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            max-width: 28rem;
+            width: 100%;
+            padding: 2.5rem;
+        }
+        
+        @media (min-width: 768px) {
+            .glass-card {
+                padding: 3rem;
+            }
+        }
+
+        h1, h2, h3 {
+            font-weight: 700;
+        }
+        
+        .message-box {
+            position: fixed;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .message {
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: opacity 0.3s ease-in-out;
+            opacity: 1;
+        }
+        .message.success {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        .message.error {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #ffffff;
+            border-radius: 50%;
+            width: 1.5rem;
+            height: 1.5rem;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <!-- Back Button -->
+        <a href="login.html" class="absolute top-6 left-6 text-gray-400 hover:text-white transition-colors duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+        </a>
+        
+        <main class="glass-card">
+            <div class="flex flex-col items-center mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-16 h-16 text-blue-400">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18zM12 9v4.5m0 3.5v.5" />
+                </svg>
+                <h1 class="text-3xl font-bold text-center text-gray-200 mt-2">NextEd</h1>
+            </div>
+            <h2 class="text-2xl font-bold text-center text-gray-100 mb-6">Teacher Registration</h2>
+            
+            <form id="teacher-register-form" class="space-y-6">
+                <div>
+                    <label for="teacher-name" class="block text-sm font-medium text-gray-300">Name</label>
+                    <input type="text" id="teacher-name" placeholder="Enter teacher's name" required
+                           class="mt-1 block w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-white transition-colors duration-200">
+                </div>
+                <div>
+                    <label for="teacher-email" class="block text-sm font-medium text-gray-300">Email Address</label>
+                    <input type="email" id="teacher-email" placeholder="Enter teacher's email" required
+                           class="mt-1 block w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-white transition-colors duration-200">
+                </div>
+                <div>
+                    <label for="teacher-password" class="block text-sm font-medium text-gray-300">Password</label>
+                    <input type="password" id="teacher-password" placeholder="Create a password" required
+                           class="mt-1 block w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-white transition-colors duration-200">
+                </div>
+                <button type="submit" id="register-btn"
+                        class="w-full flex items-center justify-center px-4 py-3 border border-transparent text-lg font-semibold rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                    Register
+                </button>
+            </form>
+        </main>
+    </div>
+    <div id="message-box" class="message-box"></div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5000/api';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const teacherRegisterForm = document.getElementById('teacher-register-form');
+            const messageBox = document.getElementById('message-box');
+            const registerBtn = document.getElementById('register-btn');
+
+            function showMessage(msg, type = 'success') {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${type}`;
+                messageDiv.textContent = msg;
+                messageBox.prepend(messageDiv);
+                setTimeout(() => {
+                    messageDiv.style.opacity = '0';
+                    setTimeout(() => messageDiv.remove(), 300);
+                }, 5000);
+            }
+
+            teacherRegisterForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('teacher-name').value;
+                const email = document.getElementById('teacher-email').value;
+                const password = document.getElementById('teacher-password').value;
+
+                registerBtn.innerHTML = '<div class="loading-spinner"></div>';
+                registerBtn.disabled = true;
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/auth/teacher/register`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, email, password })
+                    });
+                    const data = await response.json();
+                    if (response.ok) {
+                        showMessage(data.msg, 'success');
+                    } else {
+                        showMessage(data.msg, 'error');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    showMessage('An error occurred during registration.', 'error');
+                } finally {
+                    registerBtn.innerHTML = 'Register';
+                    registerBtn.disabled = false;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

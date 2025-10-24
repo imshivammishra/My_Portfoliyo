@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Lab</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+
+        .dark body {
+            background-color: #1a202c;
+            color: #e2e8f0;
+        }
+
+        .dark .lab-container {
+            background-color: #2d3748;
+            border-color: #4a5568;
+        }
+        
+        .lab-display {
+            background-color: #e2e8f0;
+            border-radius: 12px;
+            border: 2px solid #cbd5e0;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+        }
+
+        .dark .lab-display {
+            background-color: #4a5568;
+            border-color: #6a768c;
+        }
+        
+        .lab-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .select-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .select-container select {
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid #d1d5db;
+            background-color: white;
+            transition: border-color 0.2s;
+        }
+
+        .dark .select-container select {
+            background-color: #4a5568;
+            border-color: #6a768c;
+            color: #e2e8f0;
+        }
+
+        .select-container select:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+        }
+
+        #animation-list, #info-panel {
+            scrollbar-width: thin;
+            scrollbar-color: #4CAF50 #f0f4f8;
+        }
+
+        #animation-list::-webkit-scrollbar, #info-panel::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #animation-list::-webkit-scrollbar-track, #info-panel::-webkit-scrollbar-track {
+            background: #f0f4f8;
+        }
+
+        #animation-list::-webkit-scrollbar-thumb, #info-panel::-webkit-scrollbar-thumb {
+            background-color: #4CAF50;
+            border-radius: 4px;
+            border: 2px solid #f0f4f8;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen py-10">
+
+    <div class="container mx-auto p-6 md:p-10">
+        
+        <header class="flex flex-col md:flex-row items-center justify-between mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h1 class="text-4xl font-extrabold text-gray-800 dark:text-white mb-4 md:mb-0">Virtual Lab 🔬</h1>
+            
+            <a href="student_dashboard.html" class="text-gray-600 dark:text-gray-400 font-semibold px-4 py-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-300 flex items-center gap-2">
+                <i class="fas fa-home"></i>
+                Back to Dashboard
+            </a>
+            
+        </header>
+
+        <div class="lab-container bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 p-6 md:p-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <main class="md:col-span-1 flex flex-col h-full">
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Choose Your Experiment ✨</h2>
+                    
+                    <div class="select-container">
+                        <label for="category-select" class="text-lg font-semibold text-gray-700 dark:text-gray-300">1. Select a Category:</label>
+                        <select id="category-select" class="w-full">
+                            <option value="">-- Select Category --</option>
+                            <option value="physics">Physics</option>
+                            <option value="chemistry">Chemistry</option>
+                            <option value="math">Mathematics</option>
+                            <option value="biology">Biology</option>
+                        </select>
+                    </div>
+
+                    <div class="select-container mt-4">
+                        <label for="animation-select" class="text-lg font-semibold text-gray-700 dark:text-gray-300">2. Select an Animation:</label>
+                        <select id="animation-select" class="w-full" disabled>
+                            <option value="">-- Select Animation --</option>
+                        </select>
+                    </div>
+
+                    <div class="flex-grow flex flex-col mt-6 border border-gray-300 dark:border-gray-600 rounded-lg p-4 bg-gray-50 dark:bg-gray-700 transition-colors duration-200">
+                        <h3 class="font-bold text-lg mb-2 text-gray-800 dark:text-gray-200">Description</h3>
+                        <p id="animation-description" class="text-gray-600 dark:text-gray-400">Select an animation from the dropdown to see its description here.</p>
+                    </div>
+
+                    <button id="run-button" class="mt-6 bg-green-600 text-white px-6 py-4 rounded-lg font-semibold text-xl hover:bg-green-700 transition duration-300 w-full" disabled>
+                        Run Animation
+                    </button>
+                    <button id="back-button" class="mt-4 bg-gray-600 text-white px-6 py-4 rounded-lg font-semibold text-xl hover:bg-gray-700 transition duration-300 w-full hidden">
+                        &larr; Back to Selection
+                    </button>
+                </main>
+
+                <aside class="md:col-span-2 flex flex-col">
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Live Simulation 🧪</h2>
+                    <div id="lab-display" class="lab-display">
+                        <canvas id="lab-canvas" class="lab-canvas"></canvas>
+                        <p id="no-sim-message" class="absolute text-center text-gray-500 dark:text-gray-400 p-4">Your selected animation will be displayed here.</p>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const categorySelect = document.getElementById('category-select');
+            const animationSelect = document.getElementById('animation-select');
+            const runButton = document.getElementById('run-button');
+            const backButton = document.getElementById('back-button');
+            const canvas = document.getElementById('lab-canvas');
+            const ctx = canvas.getContext('2d');
+            const labDisplay = document.getElementById('lab-display');
+            const noSimMessage = document.getElementById('no-sim-message');
+            const descriptionPanel = document.getElementById('animation-description');
+
+            let animationFrameId = null;
+
+            const resizeCanvas = () => {
+                canvas.width = labDisplay.clientWidth;
+                canvas.height = labDisplay.clientHeight;
+            };
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            const animationsData = {
+                'physics': [
+                    { id: 'pendulum', title: 'Simple Pendulum', description: 'Simulates the classic motion of a pendulum, showcasing the transfer of kinetic and potential energy.' },
+                    { id: 'collision', title: 'Elastic Collision', description: 'Visualizes an elastic collision between two balls, demonstrating the conservation of momentum and energy.' },
+                    { id: 'orbital-mechanics', title: 'Orbital Mechanics', description: 'Models a celestial body orbiting a central star with customizable initial velocity and mass.' },
+                    { id: 'fluid-dynamics', title: 'Fluid Dynamics', description: 'A particle-based simulation of fluid flow and pressure, demonstrating turbulence and viscosity.' },
+                    { id: 'wave', title: 'Transverse Wave', description: 'Visualizes the motion of a transverse wave, showing how particles move perpendicular to the wave\'s direction.' },
+                    { id: 'galaxy', title: 'Galaxy Formation', description: 'Simulates the gravitational collapse of gas and dust particles to form a rotating spiral galaxy.' },
+                    { id: 'quantum-tunneling', title: 'Quantum Tunneling', description: 'A simplified animation showing a particle passing through an energy barrier, a key concept in quantum mechanics.' },
+                    { id: 'black-hole', title: 'Black Hole Gravity', description: 'Visualizes the gravitational warping of spacetime around a black hole, pulling in nearby objects.' },
+                    { id: 'brownian-motion', title: 'Brownian Motion', description: 'Demonstrates the random motion of particles suspended in a fluid as a result of collision with other atoms or molecules.' },
+                    { id: 'magnetism', title: 'Magnetic Fields', description: 'Visualizes the magnetic field lines around a bar magnet using iron filings.' }
+                ],
+                'chemistry': [
+                    { id: 'h2o', title: 'Water Synthesis (2H₂ + O₂ → 2H₂O)', description: 'An atomic-level visualization of hydrogen and oxygen molecules combining to form water.' },
+                    { id: 'diffusion', title: 'Gas Diffusion', description: 'Simulates the random motion of gas particles and their gradual mixing in a confined space.' },
+                    { id: 'crystal-growth', title: 'Crystal Growth', description: 'A visualization of a crystalline structure forming from a super-saturated solution.' },
+                    { id: 'acid-base', title: 'Acid-Base Reaction', description: 'Illustrates a simple acid-base neutralization reaction with H+ and OH- ions.' },
+                    { id: 'covalent-bonds', title: 'Covalent Bonds', description: 'Demonstrates the sharing of electrons between two atoms to form a covalent bond.' },
+                    { id: 'electrolysis', title: 'Electrolysis', description: 'Shows the decomposition of a compound (water) into its elements (hydrogen and oxygen) using an electric current.' },
+                    { id: 'reaction-rate', title: 'Reaction Rate', description: 'Simulates how temperature and concentration affect the speed of a chemical reaction.' },
+                    { id: 'titration', title: 'Titration Curve', description: 'Plots a titration curve showing the change in pH as a base is added to an acid.' },
+                    { id: 'solubility-temp', title: 'Solubility vs. Temperature', description: 'Visualizes how the solubility of a salt changes with increasing temperature.' },
+                    { id: 'atomic-decay', title: 'Radioactive Atomic Decay', description: 'A probabilistic animation of an unstable atom emitting particles and transforming into a new element.' }
+                ],
+                'math': [
+                    { id: 'fractal-mandelbrot', title: 'Mandelbrot Set', description: 'Generates an intricate and infinitely complex visualization of the Mandelbrot fractal.' },
+                    { id: 'fractal-julia', title: 'Julia Set Fractal', description: 'An interactive visualization of the Julia Set fractal, exploring different constants.' },
+                    { id: 'graphing', title: 'Function Graphing', description: 'Plots a given mathematical function, allowing you to see its shape and properties.' },
+                    { id: 'calculus', title: 'Calculus: Derivative', description: 'Illustrates the concept of a derivative by showing the tangent line at a point on a curve.' },
+                    { id: 'quaternions', title: 'Quaternion Rotation', description: 'Visualizes a 3D object rotating in space using quaternions for smooth and stable rotation.' },
+                    { id: 'fibonacci-spiral', title: 'Fibonacci Spiral', description: 'Draws a dynamic spiral based on the Fibonacci sequence, showing a natural pattern.' },
+                    { id: 'lissajous', title: 'Lissajous Curves', description: 'Creates mesmerizing curves formed by a point moving with simple harmonic motion in two perpendicular directions.' },
+                    { id: 'pi-visualization', title: 'Visualizing Pi', description: 'A Monte Carlo simulation that estimates the value of Pi by randomly plotting points inside a square.' },
+                    { id: 'complex-numbers', title: 'Complex Numbers', description: 'Animates the multiplication of a complex number, showing its rotation and scaling on the complex plane.' },
+                    { id: 'cellular-automaton', title: 'Conway\'s Game of Life', description: 'A simulation of a cellular automaton where a simple set of rules creates complex patterns.' }
+                ],
+                'biology': [
+                    { id: 'cellular-division', title: 'Cellular Division (Mitosis)', description: 'Simulates the steps of mitosis, including chromosome alignment and separation.' },
+                    { id: 'protein-folding', title: 'Protein Folding', description: 'A simplified model showing how a protein chain folds into a specific 3D shape.' },
+                    { id: 'ecosystem', title: 'Simple Ecosystem', description: 'A model of a basic predator-prey ecosystem, demonstrating population dynamics.' },
+                    { id: 'dna-replication', title: 'DNA Replication', description: 'Visualizes the unzipping of a DNA strand and the synthesis of new complementary strands.' },
+                    { id: 'osmosis', title: 'Osmosis', description: 'Shows the movement of water molecules across a semi-permeable membrane to equalize concentration.' },
+                    { id: 'neuron', title: 'Neuron Firing', description: 'Simulates a neuron firing an action potential as an electrical signal travels along its axon.' },
+                    { id: 'photosynthesis', title: 'Photosynthesis', description: 'A visualization of a chloroplast converting light energy into chemical energy.' },
+                    { id: 'virus-infection', title: 'Virus Infection', description: 'A model showing how a virus attaches to a host cell and injects its genetic material.' },
+                    { id: 'population-growth', title: 'Population Growth', description: 'Plots a logistic growth curve showing how a population size changes over time with limited resources.' },
+                    { id: 'blood-flow', title: 'Blood Flow', description: 'Simulates the movement of red blood cells through a blood vessel, showing laminar flow.' }
+                ]
+            };
+
+            function clearCanvas() {
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
+                }
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                noSimMessage.style.display = 'block';
+                canvas.style.display = 'none'; // Hide canvas when no animation is running
+            }
+
+            categorySelect.addEventListener('change', () => {
+                const category = categorySelect.value;
+                animationSelect.innerHTML = '<option value="">-- Select Animation --</option>';
+                animationSelect.disabled = true;
+                runButton.disabled = true;
+                descriptionPanel.textContent = 'Select an animation to see its description here.';
+                clearCanvas();
+                runButton.classList.remove('hidden');
+                backButton.classList.add('hidden');
+
+                if (category) {
+                    animationsData[category].forEach(anim => {
+                        const option = document.createElement('option');
+                        option.value = anim.id;
+                        option.textContent = anim.title;
+                        animationSelect.appendChild(option);
+                    });
+                    animationSelect.disabled = false;
+                }
+            });
+
+            animationSelect.addEventListener('change', () => {
+                const selectedId = animationSelect.value;
+                const category = categorySelect.value;
+                const anim = animationsData[category].find(a => a.id === selectedId);
+                
+                if (anim) {
+                    descriptionPanel.textContent = anim.description;
+                    runButton.disabled = false;
+                } else {
+                    descriptionPanel.textContent = 'Select an animation to see its description here.';
+                    runButton.disabled = true;
+                }
+                clearCanvas();
+            });
+
+            runButton.addEventListener('click', () => {
+                const selectedId = animationSelect.value;
+                const category = categorySelect.value;
+                if (!selectedId) return;
+                
+                clearCanvas();
+                noSimMessage.style.display = 'none';
+                canvas.style.display = 'block'; // Show canvas when an animation is running
+                
+                // Hide run button, show back button
+                runButton.classList.add('hidden');
+                backButton.classList.remove('hidden');
+                
+                const animationFunction = allAnimations[`${category}-${selectedId}`];
+                if (animationFunction) {
+                    animationFunction(ctx, canvas);
+                }
+            });
+            
+            backButton.addEventListener('click', () => {
+                // Stop the current animation
+                clearCanvas();
+                
+                // Show run button, hide back button
+                runButton.classList.remove('hidden');
+                backButton.classList.add('hidden');
+            });
+
+            const allAnimations = {
+                // PHYSICS (10 animations)
+                'physics-pendulum': (ctx, canvas) => {
+                    const g = 9.81; const length = 200; let angle = Math.PI / 4; let angularVelocity = 0; const originX = canvas.width / 2; const originY = 50;
+                    const draw = () => {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        const angularAcceleration = -g / (length / 100) * Math.sin(angle); angularVelocity += angularAcceleration * 0.05; angle += angularVelocity * 0.05;
+                        const bobX = originX + length * Math.sin(angle); const bobY = originY + length * Math.cos(angle);
+                        ctx.beginPath(); ctx.moveTo(originX, originY); ctx.lineTo(bobX, bobY); ctx.strokeStyle = '#4a5568'; ctx.lineWidth = 2; ctx.stroke();
+                        ctx.beginPath(); ctx.arc(bobX, bobY, 20, 0, Math.PI * 2); ctx.fillStyle = '#ef4444'; ctx.fill();
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'physics-collision': (ctx, canvas) => {
+                    let ball1 = { x: 50, y: canvas.height / 2, radius: 20, vx: 2, color: '#2563eb' }; let ball2 = { x: canvas.width - 50, y: canvas.height / 2, radius: 20, vx: -2, color: '#f59e0b' };
+                    const draw = () => {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        const dx = ball1.x - ball2.x; const distance = Math.sqrt(dx * dx);
+                        if (distance < ball1.radius + ball2.radius) { const tempVx = ball1.vx; ball1.vx = ball2.vx; ball2.vx = tempVx; }
+                        ball1.x += ball1.vx; ball2.x += ball2.vx;
+                        ctx.beginPath(); ctx.arc(ball1.x, ball1.y, ball1.radius, 0, Math.PI * 2); ctx.fillStyle = ball1.color; ctx.fill();
+                        ctx.beginPath(); ctx.arc(ball2.x, ball2.y, ball2.radius, 0, Math.PI * 2); ctx.fillStyle = ball2.color; ctx.fill();
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'physics-orbital-mechanics': (ctx, canvas) => {
+                    const sun = { x: canvas.width/2, y: canvas.height/2, mass: 1000, radius: 30, color: 'yellow' };
+                    let planet = { x: canvas.width/2 + 200, y: canvas.height/2, mass: 1, radius: 10, vx: 0, vy: -2, color: 'blue' };
+                    const draw = () => {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        const dx = sun.x - planet.x; const dy = sun.y - planet.y; const dist = Math.sqrt(dx*dx + dy*dy);
+                        const force = (sun.mass * planet.mass) / (dist * dist);
+                        const ax = (force * dx / dist) / planet.mass; const ay = (force * dy / dist) / planet.mass;
+                        planet.vx += ax; planet.vy += ay; planet.x += planet.vx; planet.y += planet.vy;
+                        ctx.beginPath(); ctx.arc(sun.x, sun.y, sun.radius, 0, Math.PI*2); ctx.fillStyle = sun.color; ctx.fill();
+                        ctx.beginPath(); ctx.arc(planet.x, planet.y, planet.radius, 0, Math.PI*2); ctx.fillStyle = planet.color; ctx.fill();
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'physics-fluid-dynamics': (ctx, canvas) => {
+                    const particles = []; const numParticles = 1000; const viscosity = 0.5;
+                    for (let i = 0; i < numParticles; i++) { particles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, vx: (Math.random() - 0.5) * 2, vy: (Math.random() - 0.5) * 2 }); }
+                    const draw = () => {
+                        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        particles.forEach(p1 => {
+                            p1.vx *= viscosity; p1.vy *= viscosity;
+                            particles.forEach(p2 => { if (p1 === p2) return; const dx = p2.x - p1.x; const dy = p2.y - p1.y; const dist2 = dx*dx + dy*dy; if (dist2 < 100) { p1.vx -= dx * 0.01; p1.vy -= dy * 0.01; } });
+                            p1.x += p1.vx; p1.y += p1.vy;
+                            if (p1.x < 0 || p1.x > canvas.width) p1.vx *= -1; if (p1.y < 0 || p1.y > canvas.height) p1.vy *= -1;
+                            ctx.beginPath(); ctx.arc(p1.x, p1.y, 2, 0, Math.PI * 2); ctx.fillStyle = 'blue'; ctx.fill();
+                        });
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'physics-wave': (ctx, canvas) => {
+                    let points = []; const numPoints = 50; const amplitude = 50; const frequency = 0.05;
+                    for (let i = 0; i < numPoints; i++) { points.push({ x: (canvas.width / numPoints) * i, y: canvas.height / 2 }); }
+                    let phase = 0;
+                    const draw = () => {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        ctx.beginPath(); ctx.moveTo(points[0].x, points[0].y);
+                        for (let i = 0; i < numPoints; i++) { points[i].y = canvas.height / 2 + amplitude * Math.sin(frequency * points[i].x + phase); ctx.lineTo(points[i].x, points[i].y); }
+                        ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 3; ctx.stroke(); phase += 0.1;
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'physics-galaxy': (ctx, canvas) => {
+                    let particles = [];
+                    const numParticles = 2000;
+                    const center = { x: canvas.width / 2, y: canvas.height / 2 };
+                    for (let i = 0; i < numParticles; i++) {
+                        const angle = Math.random() * Math.PI * 2;
+                        const dist = Math.pow(Math.random(), 2) * 200;
+                        particles.push({
+                            x: center.x + Math.cos(angle) * dist,
+                            y: center.y + Math.sin(angle) * dist,
+                            vx: 0, vy: 0,
+                            mass: 1
+                        });
+                    }
+                    const draw = () => {
+                        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        particles.forEach(p => {
+                            const dx = center.x - p.x;
+                            const dy = center.y - p.y;
+                            const dist = Math.sqrt(dx * dx + dy * dy);
+                            if (dist < 1) return;
+                            const force = 1000 / (dist * dist);
+                            p.vx += force * dx / dist;
+                            p.vy += force * dy / dist;
+                            
+                            p.vx -= (p.y - center.y) * 0.001;
+                            p.vy += (p.x - center.x) * 0.001;
+
+                            p.x += p.vx; p.y += p.vy;
+                            ctx.fillStyle = 'white'; ctx.beginPath(); ctx.arc(p.x, p.y, 1, 0, Math.PI * 2); ctx.fill();
+                        });
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'physics-quantum-tunneling': (ctx, canvas) => {
+                    let particle = { x: 10, y: canvas.height / 2, vx: 2, radius: 5 };
+                    let barrier = { x: canvas.width / 2, width: 20, height: canvas.height, color: '#888' };
+                    let tunneled = false;
+                    const draw = () => {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        ctx.fillStyle = barrier.color; ctx.fillRect(barrier.x, 0, barrier.width, barrier.height);
+                        particle.x += particle.vx;
+                        if (particle.x > barrier.x && particle.x < barrier.x + barrier.width) {
+                            if (Math.random() < 0.05) { tunneled = true; particle.vx *= 0.5; }
+                            else { particle.vx *= -1; }
+                        }
+                        if (tunneled && particle.x > canvas.width) { tunneled = false; particle.x = 10; particle.vx = 2; }
+                        if (particle.x < 0) { particle.vx *= -1; }
+                        ctx.beginPath(); ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI*2); ctx.fillStyle='#f59e0b'; ctx.fill();
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'physics-black-hole': (ctx, canvas) => {
+                    const center = { x: canvas.width/2, y: canvas.height/2 };
+                    let particles = [];
+                    for(let i=0; i<100; i++) particles.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx:0, vy:0});
+                    const draw = () => {
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        ctx.beginPath(); ctx.arc(center.x,center.y,50,0,Math.PI*2); ctx.fillStyle='black'; ctx.fill();
+                        particles.forEach(p => {
+                            const dx = center.x - p.x; const dy = center.y - p.y; const dist = Math.sqrt(dx*dx+dy*dy);
+                            p.vx += dx * 0.001 / dist; p.vy += dy * 0.001 / dist;
+                            p.x += p.vx; p.y += p.vy;
+                            if(dist < 50) { p.x = Math.random()*canvas.width; p.y = Math.random()*canvas.height; p.vx=0; p.vy=0; }
+                            ctx.beginPath(); ctx.arc(p.x,p.y,2,0,Math.PI*2); ctx.fillStyle='white'; ctx.fill();
+                        });
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'physics-brownian-motion': (ctx, canvas) => {
+                    let largeParticle = {x: canvas.width/2, y: canvas.height/2, vx: 0, vy: 0, radius: 15, color: 'blue'};
+                    let smallParticles = [];
+                    for(let i=0; i<200; i++){ smallParticles.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx:(Math.random()-0.5)*5, vy:(Math.random()-0.5)*5, radius:2, color:'gray'});}
+                    const draw = () => {
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        largeParticle.vx *= 0.98; largeParticle.vy *= 0.98;
+                        largeParticle.x += largeParticle.vx; largeParticle.y += largeParticle.vy;
+                        if(largeParticle.x < largeParticle.radius || largeParticle.x > canvas.width-largeParticle.radius) largeParticle.vx*=-1;
+                        if(largeParticle.y < largeParticle.radius || largeParticle.y > canvas.height-largeParticle.radius) largeParticle.vy*=-1;
+                        smallParticles.forEach(sp => {
+                            sp.x+=sp.vx; sp.y+=sp.vy;
+                            if(sp.x<sp.radius||sp.x>canvas.width-sp.radius)sp.vx*=-1; if(sp.y<sp.radius||sp.y>canvas.height-sp.radius)sp.vy*=-1;
+                            const dx = largeParticle.x-sp.x; const dy = largeParticle.y-sp.y; const dist = Math.sqrt(dx*dx+dy*dy);
+                            if(dist < largeParticle.radius+sp.radius){
+                                largeParticle.vx += sp.vx * 0.1; largeParticle.vy += sp.vy * 0.1;
+                            }
+                            ctx.beginPath(); ctx.arc(sp.x,sp.y,sp.radius,0,Math.PI*2); ctx.fillStyle=sp.color; ctx.fill();
+                        });
+                        ctx.beginPath(); ctx.arc(largeParticle.x,largeParticle.y,largeParticle.radius,0,Math.PI*2); ctx.fillStyle=largeParticle.color; ctx.fill();
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'physics-magnetism': (ctx, canvas) => {
+                    const magnet = {x: canvas.width/2, y: canvas.height/2, width: 100, height: 20};
+                    const draw = () => {
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        ctx.fillStyle='red'; ctx.fillRect(magnet.x-magnet.width/2, magnet.y-magnet.height/2, magnet.width/2, magnet.height);
+                        ctx.fillStyle='blue'; ctx.fillRect(magnet.x, magnet.y-magnet.height/2, magnet.width/2, magnet.height);
+                        for(let i=0; i<50; i++){
+                            ctx.beginPath();
+                            const angle = i * Math.PI*2/50;
+                            ctx.moveTo(magnet.x+50*Math.cos(angle), magnet.y+50*Math.sin(angle));
+                            ctx.lineTo(magnet.x+200*Math.cos(angle), magnet.y+200*Math.sin(angle));
+                            ctx.strokeStyle='black'; ctx.stroke();
+                        }
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+
+                // CHEMISTRY (10 animations)
+                'chemistry-h2o': (ctx, canvas) => {
+                    let h1 = {x: 50, y: 50, vx: 1, vy: 0, color: '#dcfce7', radius: 8};
+                    let h2 = {x: 70, y: 50, vx: 1, vy: 0, color: '#dcfce7', radius: 8};
+                    let o1 = {x: canvas.width - 50, y: canvas.height / 2, vx: -1.5, vy: 0, color: '#ef4444', radius: 12};
+                    let bondsFormed = false;
+                    const draw = () => {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        if (!bondsFormed) {
+                            h1.x += h1.vx; h1.y += h1.vy;
+                            h2.x += h2.vx; h2.y += h2.vy;
+                            o1.x += o1.vx; o1.y += o1.vy;
+
+                            // Check for collision
+                            const distH1O = Math.sqrt((h1.x - o1.x)**2 + (h1.y - o1.y)**2);
+                            const distH2O = Math.sqrt((h2.x - o1.x)**2 + (h2.y - o1.y)**2);
+                            if (distH1O < h1.radius + o1.radius && distH2O < h2.radius + o1.radius) {
+                                bondsFormed = true;
+                                h1.vx = h2.vx = o1.vx = 0;
+                                h1.vy = h2.vy = o1.vy = 0;
+                                // Snap atoms into water molecule shape
+                                h1.x = o1.x - 20; h1.y = o1.y + 15;
+                                h2.x = o1.x + 20; h2.y = o1.y + 15;
+                            }
+                        }
+
+                        // Draw H2 molecule
+                        ctx.beginPath(); ctx.moveTo(h1.x, h1.y); ctx.lineTo(h2.x, h2.y); ctx.strokeStyle = 'gray'; ctx.lineWidth = 2; ctx.stroke();
+
+                        // Draw O2 molecule
+                        ctx.beginPath(); ctx.arc(o1.x, o1.y, o1.radius, 0, Math.PI * 2); ctx.fillStyle = o1.color; ctx.fill();
+
+                        // Draw atoms
+                        ctx.beginPath(); ctx.arc(h1.x, h1.y, h1.radius, 0, Math.PI * 2); ctx.fillStyle = h1.color; ctx.fill();
+                        ctx.beginPath(); ctx.arc(h2.x, h2.y, h2.radius, 0, Math.PI * 2); ctx.fillStyle = h2.color; ctx.fill();
+
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'chemistry-diffusion': (ctx, canvas) => {
+                    const particles = [];
+                    for (let i = 0; i < 200; i++) { particles.push({ x: Math.random() * canvas.width / 2, y: Math.random() * canvas.height, vx: (Math.random() - 0.5) * 2, vy: (Math.random() - 0.5) * 2, color: 'blue' }); }
+                    for (let i = 0; i < 200; i++) { particles.push({ x: canvas.width / 2 + Math.random() * canvas.width / 2, y: Math.random() * canvas.height, vx: (Math.random() - 0.5) * 2, vy: (Math.random() - 0.5) * 2, color: 'red' }); }
+                    const draw = () => {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        particles.forEach(p => {
+                            p.x += p.vx; p.y += p.vy;
+                            if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                            if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                            ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI * 2); ctx.fillStyle = p.color; ctx.fill();
+                        });
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'chemistry-crystal-growth': (ctx, canvas) => {
+                    const crystal = [];
+                    const draw = () => {
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        if (crystal.length < 500) {
+                            const newParticle = { x: canvas.width/2, y: canvas.height/2, vx: (Math.random()-0.5)*5, vy: (Math.random()-0.5)*5, color: '#16a34a', radius: 3 };
+                            let stuck = false;
+                            for (let i = 0; i < crystal.length; i++) {
+                                const dist = Math.sqrt((newParticle.x - crystal[i].x)**2 + (newParticle.y - crystal[i].y)**2);
+                                if (dist < newParticle.radius * 2 + 5) {
+                                    stuck = true;
+                                    newParticle.vx = 0;
+                                    newParticle.vy = 0;
+                                    break;
+                                }
+                            }
+                            newParticle.x += newParticle.vx;
+                            newParticle.y += newParticle.vy;
+                            if (stuck || crystal.length === 0) {
+                                crystal.push(newParticle);
+                            } else {
+                                newParticle.x += newParticle.vx; newParticle.y += newParticle.vy;
+                            }
+                        }
+                        crystal.forEach(p => {
+                            ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fillStyle = p.color; ctx.fill();
+                        });
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'chemistry-acid-base': (ctx, canvas) => {
+                    let acidParticles = []; let baseParticles = [];
+                    for(let i=0; i<100; i++) acidParticles.push({x: Math.random()*canvas.width/2, y: Math.random()*canvas.height, color:'red', radius:5});
+                    for(let i=0; i<100; i++) baseParticles.push({x: canvas.width/2 + Math.random()*canvas.width/2, y: Math.random()*canvas.height, color:'blue', radius:5});
+                    const draw = () => {
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        acidParticles = acidParticles.filter(p => {
+                            p.x += (Math.random()-0.5)*3; p.y += (Math.random()-0.5)*3;
+                            p.x = Math.min(Math.max(p.x, 0), canvas.width); p.y = Math.min(Math.max(p.y, 0), canvas.height);
+                            ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2); ctx.fillStyle=p.color; ctx.fill();
+                            return !baseParticles.some(bp => Math.sqrt((p.x-bp.x)**2 + (p.y-bp.y)**2) < p.radius+bp.radius);
+                        });
+                        baseParticles = baseParticles.filter(p => {
+                            p.x += (Math.random()-0.5)*3; p.y += (Math.random()-0.5)*3;
+                            p.x = Math.min(Math.max(p.x, 0), canvas.width); p.y = Math.min(Math.max(p.y, 0), canvas.height);
+                            ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2); ctx.fillStyle=p.color; ctx.fill();
+                            return !acidParticles.some(ap => Math.sqrt((p.x-ap.x)**2 + (p.y-ap.y)**2) < p.radius+ap.radius);
+                        });
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'chemistry-covalent-bonds': (ctx, canvas) => {
+                    const atom1 = { x: canvas.width / 4, y: canvas.height / 2, radius: 25, color: '#f59e0b' };
+                    const atom2 = { x: 3 * canvas.width / 4, y: canvas.height / 2, radius: 25, color: '#2563eb' };
+                    const electrons = [];
+                    for(let i=0; i<8; i++){
+                        electrons.push({ x: atom1.x + 30 * Math.cos(i*Math.PI/4), y: atom1.y + 30 * Math.sin(i*Math.PI/4), speed: 0.05, angle: i*Math.PI/4, color: 'white', owner: atom1 });
+                        electrons.push({ x: atom2.x + 30 * Math.cos(i*Math.PI/4), y: atom2.y + 30 * Math.sin(i*Math.PI/4), speed: 0.05, angle: i*Math.PI/4, color: 'white', owner: atom2 });
+                    }
+                    const draw = () => {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        ctx.beginPath(); ctx.arc(atom1.x, atom1.y, atom1.radius, 0, Math.PI * 2); ctx.fillStyle = atom1.color; ctx.fill();
+                        ctx.beginPath(); ctx.arc(atom2.x, atom2.y, atom2.radius, 0, Math.PI * 2); ctx.fillStyle = atom2.color; ctx.fill();
+                        electrons.forEach(e => {
+                            if(e.owner === atom1){
+                                e.x = atom1.x + 30 * Math.cos(e.angle); e.y = atom1.y + 30 * Math.sin(e.angle);
+                                e.angle += e.speed;
+                            } else {
+                                e.x = atom2.x + 30 * Math.cos(e.angle); e.y = atom2.y + 30 * Math.sin(e.angle);
+                                e.angle += e.speed;
+                            }
+                            ctx.beginPath(); ctx.arc(e.x, e.y, 3, 0, Math.PI*2); ctx.fillStyle=e.color; ctx.fill();
+                        });
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'chemistry-electrolysis': (ctx, canvas) => {
+                    let water = [];
+                    for(let i=0; i<200; i++) water.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, color:'lightblue', bonded: true});
+                    let anode = {x: canvas.width/4, color:'red'};
+                    let cathode = {x: 3*canvas.width/4, color:'blue'};
+                    const draw = () => {
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        ctx.fillStyle='red'; ctx.fillRect(anode.x-5, 0, 10, canvas.height);
+                        ctx.fillStyle='blue'; ctx.fillRect(cathode.x-5, 0, 10, canvas.height);
+                        water.forEach(p => {
+                            if(p.bonded){
+                                p.x += (Math.random()-0.5)*2; p.y += (Math.random()-0.5)*2;
+                                if(Math.random() < 0.005){ p.bonded = false; }
+                            } else {
+                                if(p.x < canvas.width/2){
+                                    p.x += (anode.x - p.x) * 0.01;
+                                    p.y += (Math.random()-0.5);
+                                } else {
+                                    p.x += (cathode.x - p.x) * 0.01;
+                                    p.y += (Math.random()-0.5);
+                                }
+                            }
+                            ctx.beginPath(); ctx.arc(p.x,p.y,3,0,Math.PI*2); ctx.fillStyle=p.color; ctx.fill();
+                        });
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'chemistry-reaction-rate': (ctx, canvas) => {
+                    let reactantA = []; let reactantB = []; let productC = [];
+                    for(let i=0; i<100; i++) reactantA.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, color:'green'});
+                    for(let i=0; i<100; i++) reactantB.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, color:'orange'});
+                    const draw = () => {
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        let newProducts = [];
+                        reactantA = reactantA.filter(a => {
+                            const b = reactantB.find(b => Math.sqrt((a.x-b.x)**2+(a.y-b.y)**2)<10);
+                            if(b){ newProducts.push({x:(a.x+b.x)/2, y:(a.y+b.y)/2, color:'purple'}); return false; }
+                            a.x += (Math.random()-0.5)*5; a.y += (Math.random()-0.5)*5;
+                            ctx.beginPath(); ctx.arc(a.x,a.y,5,0,Math.PI*2); ctx.fillStyle=a.color; ctx.fill();
+                            return true;
+                        });
+                        reactantB = reactantB.filter(b => {
+                            const a = newProducts.find(p => Math.sqrt((b.x-p.x)**2+(b.y-p.y)**2)<10);
+                            return !a;
+                        });
+                        productC.push(...newProducts);
+                        productC.forEach(c => {
+                            ctx.beginPath(); ctx.arc(c.x, c.y, 5, 0, Math.PI*2); ctx.fillStyle=c.color; ctx.fill();
+                        });
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'chemistry-titration': (ctx, canvas) => {
+                    let ph = 7; let volume = 0;
+                    ctx.fillStyle='white';
+                    ctx.fillRect(0,0,canvas.width,canvas.height);
+                    const draw = () => {
+                        ctx.fillStyle='black';
+                        ctx.fillRect(0,0,canvas.width,canvas.height);
+                        ctx.strokeStyle='white'; ctx.lineWidth=2;
+                        ctx.beginPath(); ctx.moveTo(0, canvas.height);
+                        ctx.lineTo(canvas.width, canvas.height); ctx.stroke();
+                        ctx.beginPath(); ctx.moveTo(0, 0);
+                        ctx.lineTo(0, canvas.height); ctx.stroke();
+                        ctx.beginPath(); ctx.arc(volume, canvas.height - ph * 30, 5, 0, Math.PI*2); ctx.fillStyle='red'; ctx.fill();
+                        volume+=1;
+                        if(volume < canvas.width/2){
+                            ph = 7 - (volume/canvas.width*14);
+                        } else {
+                            ph = 7 + ((volume-canvas.width/2)/canvas.width*14);
+                        }
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'chemistry-solubility-temp': (ctx, canvas) => {
+                    let temp = 0;
+                    let dissolved = 0;
+                    const maxSolubility = 100;
+                    const draw = () => {
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        temp += 0.5;
+                        dissolved = maxSolubility * (1 - Math.exp(-0.02 * temp));
+                        ctx.strokeStyle='blue'; ctx.lineWidth=3;
+                        ctx.beginPath(); ctx.moveTo(0, canvas.height);
+                        for(let i=0; i<temp; i++){
+                            const dissolvedAmt = maxSolubility * (1 - Math.exp(-0.02 * i));
+                            ctx.lineTo(i, canvas.height - dissolvedAmt*3);
+                        }
+                        ctx.stroke();
+                        ctx.fillStyle='red'; ctx.beginPath(); ctx.arc(temp, canvas.height-dissolved*3, 5, 0, Math.PI*2); ctx.fill();
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'chemistry-atomic-decay': (ctx, canvas) => {
+                    let atoms = [];
+                    for(let i=0; i<100; i++) atoms.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, color:'green'});
+                    const draw = () => {
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        atoms = atoms.filter(a => {
+                            if(Math.random() < 0.005) return false;
+                            ctx.beginPath(); ctx.arc(a.x, a.y, 5, 0, Math.PI*2); ctx.fillStyle=a.color; ctx.fill();
+                            return true;
+                        });
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                
+                // MATH (10 animations)
+                'math-fractal-mandelbrot': (ctx, canvas) => {
+                    const maxIterations = 50;
+                    const draw = () => {
+                        for(let x=0; x<canvas.width; x++){
+                            for(let y=0; y<canvas.height; y++){
+                                const z = {x:0, y:0};
+                                const c = {x: (x - canvas.width/2) * 4 / canvas.width, y: (y - canvas.height/2) * 4 / canvas.height};
+                                let i=0;
+                                while(z.x*z.x + z.y*z.y < 4 && i < maxIterations){
+                                    const tempX = z.x*z.x - z.y*z.y + c.x;
+                                    z.y = 2*z.x*z.y + c.y;
+                                    z.x = tempX;
+                                    i++;
+                                }
+                                const color = `hsl(${360 * i / maxIterations}, 100%, 50%)`;
+                                ctx.fillStyle = i === maxIterations ? 'black' : color;
+                                ctx.fillRect(x,y,1,1);
+                            }
+                        }
+                    };
+                    draw();
+                },
+                'math-fractal-julia': (ctx, canvas) => {
+                    const c = {x: -0.7, y: 0.27015};
+                    const maxIterations = 100;
+                    const draw = () => {
+                        for(let x=0; x<canvas.width; x++){
+                            for(let y=0; y<canvas.height; y++){
+                                let z = {x: (x-canvas.width/2)/200, y: (y-canvas.height/2)/200};
+                                let i=0;
+                                while(z.x*z.x + z.y*z.y < 4 && i < maxIterations){
+                                    const tempX = z.x*z.x - z.y*z.y + c.x;
+                                    z.y = 2*z.x*z.y + c.y;
+                                    z.x = tempX;
+                                    i++;
+                                }
+                                const color = `hsl(${360 * i / maxIterations}, 100%, 50%)`;
+                                ctx.fillStyle = i === maxIterations ? 'black' : color;
+                                ctx.fillRect(x,y,1,1);
+                            }
+                        }
+                    };
+                    draw();
+                },
+                'math-graphing': (ctx, canvas) => {
+                    const draw = () => {
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        ctx.strokeStyle='gray';
+                        ctx.beginPath(); ctx.moveTo(0, canvas.height/2); ctx.lineTo(canvas.width, canvas.height/2); ctx.stroke();
+                        ctx.beginPath(); ctx.moveTo(canvas.width/2, 0); ctx.lineTo(canvas.width/2, canvas.height); ctx.stroke();
+                        ctx.strokeStyle='blue'; ctx.lineWidth=2;
+                        ctx.beginPath();
+                        for(let i=0; i<canvas.width; i++){
+                            const x = (i-canvas.width/2)/50;
+                            const y = Math.sin(x)*50;
+                            ctx.lineTo(i, canvas.height/2 - y);
+                        }
+                        ctx.stroke();
+                    };
+                    draw();
+                },
+                'math-calculus': (ctx, canvas) => {
+                    const f = (x) => 0.01 * x * x;
+                    let x = -canvas.width/2;
+                    const draw = () => {
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        ctx.strokeStyle='blue'; ctx.lineWidth=2;
+                        ctx.beginPath();
+                        for(let i=0; i<canvas.width; i++){
+                            ctx.lineTo(i, canvas.height/2 - f(i - canvas.width/2));
+                        }
+                        ctx.stroke();
+                        const pX = x + canvas.width/2;
+                        const pY = canvas.height/2 - f(x);
+                        ctx.fillStyle='red'; ctx.beginPath(); ctx.arc(pX, pY, 5, 0, Math.PI*2); ctx.fill();
+                        const slope = 0.02 * x;
+                        ctx.strokeStyle='red'; ctx.beginPath();
+                        ctx.moveTo(pX - 50, pY - slope * (-50));
+                        ctx.lineTo(pX + 50, pY - slope * 50);
+                        ctx.stroke();
+                        x += 1;
+                        if(x > canvas.width/2) x = -canvas.width/2;
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'math-quaternions': (ctx, canvas) => {
+                    // This is a placeholder as 3D rendering is complex for a simple canvas.
+                    // A real implementation would require a 3D library like Three.js
+                    // This simulates rotation on a 2D plane instead.
+                    let angle = 0;
+                    const draw = () => {
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        const center = {x: canvas.width/2, y: canvas.height/2};
+                        ctx.translate(center.x, center.y);
+                        ctx.rotate(angle);
+                        ctx.fillStyle='green';
+                        ctx.fillRect(-50, -50, 100, 100);
+                        ctx.rotate(-angle);
+                        ctx.translate(-center.x, -center.y);
+                        angle += 0.02;
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'math-fibonacci-spiral': (ctx, canvas) => {
+                    let angle = 0;
+                    const draw = () => {
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        let x = canvas.width/2;
+                        let y = canvas.height/2;
+                        let a = 0; let b = 1;
+                        ctx.beginPath(); ctx.moveTo(x,y);
+                        for(let i=0; i<10; i++){
+                            let c = a+b; a=b; b=c;
+                            x += b * Math.cos(angle);
+                            y += b * Math.sin(angle);
+                            ctx.lineTo(x,y);
+                            angle += Math.PI/2;
+                        }
+                        ctx.strokeStyle='blue'; ctx.stroke();
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'math-lissajous': (ctx, canvas) => {
+                    let t = 0;
+                    const A = 100; const B = 100;
+                    const a = 3; const b = 4;
+                    const delta = Math.PI / 2;
+                    const draw = () => {
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        ctx.strokeStyle='purple'; ctx.lineWidth=2;
+                        ctx.beginPath();
+                        for(let i=0; i<360; i++){
+                            const x = canvas.width/2 + A * Math.sin(a*i/360 * Math.PI*2 + delta);
+                            const y = canvas.height/2 + B * Math.sin(b*i/360 * Math.PI*2);
+                            ctx.lineTo(x,y);
+                        }
+                        ctx.stroke();
+                        t += 0.01;
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'math-pi-visualization': (ctx, canvas) => {
+                    let inCircle = 0; let total = 0;
+                    const draw = () => {
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        ctx.strokeStyle='black'; ctx.strokeRect(0,0,canvas.width,canvas.height);
+                        ctx.beginPath(); ctx.arc(canvas.width/2, canvas.height/2, canvas.width/2, 0, Math.PI*2); ctx.stroke();
+                        for(let i=0; i<100; i++){
+                            const x = Math.random() * canvas.width;
+                            const y = Math.random() * canvas.height;
+                            const dist = Math.sqrt((x-canvas.width/2)**2 + (y-canvas.height/2)**2);
+                            if(dist < canvas.width/2){
+                                inCircle++;
+                                ctx.fillStyle='blue';
+                            } else {
+                                ctx.fillStyle='red';
+                            }
+                            ctx.beginPath(); ctx.arc(x,y,2,0,Math.PI*2); ctx.fill();
+                            total++;
+                        }
+                        const piEstimate = 4 * inCircle/total;
+                        ctx.fillStyle='black'; ctx.fillText(`Pi estimate: ${piEstimate.toFixed(4)}`, 10, 20);
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'math-complex-numbers': (ctx, canvas) => {
+                    let x = 100; let y = 0;
+                    const draw = () => {
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        const center = {x: canvas.width/2, y: canvas.height/2};
+                        ctx.beginPath(); ctx.moveTo(center.x, center.y); ctx.lineTo(center.x+x, center.y-y); ctx.strokeStyle='blue'; ctx.stroke();
+                        const newX = x*Math.cos(0.01) - y*Math.sin(0.01);
+                        const newY = x*Math.sin(0.01) + y*Math.cos(0.01);
+                        x = newX; y = newY;
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'math-cellular-automaton': (ctx, canvas) => {
+                    let grid = [];
+                    const res = 10;
+                    const cols = Math.floor(canvas.width/res);
+                    const rows = Math.floor(canvas.height/res);
+                    for(let i=0; i<cols; i++){
+                        grid[i] = [];
+                        for(let j=0; j<rows; j++){
+                            grid[i][j] = Math.random() > 0.5 ? 1 : 0;
+                        }
+                    }
+                    const draw = () => {
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        const nextGrid = [];
+                        for(let i=0; i<cols; i++){
+                            nextGrid[i] = [];
+                            for(let j=0; j<rows; j++){
+                                const sumNeighbors = (grid[i-1]?.[j-1] || 0) + (grid[i-1]?.[j] || 0) + (grid[i-1]?.[j+1] || 0) +
+                                                     (grid[i]?.[j-1] || 0) + (grid[i]?.[j+1] || 0) +
+                                                     (grid[i+1]?.[j-1] || 0) + (grid[i+1]?.[j] || 0) + (grid[i+1]?.[j+1] || 0);
+                                if(grid[i][j] === 1){
+                                    if(sumNeighbors < 2 || sumNeighbors > 3) nextGrid[i][j] = 0;
+                                    else nextGrid[i][j] = 1;
+                                } else {
+                                    if(sumNeighbors === 3) nextGrid[i][j] = 1;
+                                    else nextGrid[i][j] = 0;
+                                }
+                                if(nextGrid[i][j] === 1){
+                                    ctx.fillStyle='green';
+                                    ctx.fillRect(i*res, j*res, res-1, res-1);
+                                }
+                            }
+                        }
+                        grid = nextGrid;
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                
+                // BIOLOGY (10 animations)
+                'biology-cellular-division': (ctx, canvas) => {
+                    const chromosomes = [];
+                    for(let i=0; i<4; i++){
+                        chromosomes.push({ x: canvas.width/2 + (Math.random()-0.5)*10, y: canvas.height/2 + (Math.random()-0.5)*10, color: 'purple'});
+                    }
+                    const draw = () => {
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        const spindleFiber = {x1: 0, y1: canvas.height/2, x2: canvas.width, y2: canvas.height/2};
+                        ctx.strokeStyle='gray'; ctx.beginPath(); ctx.moveTo(spindleFiber.x1, spindleFiber.y1); ctx.lineTo(spindleFiber.x2, spindleFiber.y2); ctx.stroke();
+                        chromosomes.forEach(c => {
+                            c.y += (c.y > canvas.height/2) ? 1 : -1;
+                            ctx.beginPath(); ctx.arc(c.x, c.y, 10, 0, Math.PI*2); ctx.fillStyle=c.color; ctx.fill();
+                        });
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'biology-protein-folding': (ctx, canvas) => {
+                    let protein = [];
+                    for(let i=0; i<100; i++) protein.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, color:'orange'});
+                    const draw = () => {
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        protein.forEach((p, i) => {
+                            p.x += (Math.random()-0.5)*2; p.y += (Math.random()-0.5)*2;
+                            if(i>0) { ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(protein[i-1].x, protein[i-1].y); ctx.strokeStyle='gray'; ctx.stroke(); }
+                            ctx.beginPath(); ctx.arc(p.x,p.y,3,0,Math.PI*2); ctx.fillStyle=p.color; ctx.fill();
+                        });
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'biology-ecosystem': (ctx, canvas) => {
+                    let predators = []; let prey = [];
+                    for(let i=0; i<5; i++) predators.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, color:'red', energy:100});
+                    for(let i=0; i<50; i++) prey.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, color:'green', energy:100});
+                    const draw = () => {
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        predators.forEach(p => {
+                            p.energy -= 1;
+                            p.x += (Math.random()-0.5)*5; p.y += (Math.random()-0.5)*5;
+                            if(p.energy <=0) return;
+                            ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI*2); ctx.fillStyle=p.color; ctx.fill();
+                        });
+                        prey.forEach(p => {
+                            p.energy += 1;
+                            p.x += (Math.random()-0.5)*5; p.y += (Math.random()-0.5)*5;
+                            if(p.energy > 200) prey.push({x: p.x, y: p.y, color: p.color, energy: 100});
+                            ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI*2); ctx.fillStyle=p.color; ctx.fill();
+                        });
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'biology-dna-replication': (ctx, canvas) => {
+                    const dna = [];
+                    for(let i=0; i<10; i++){
+                        dna.push({x1: canvas.width/2 - 20, y1: i*30+50, x2: canvas.width/2 + 20, y2: i*30+50, color1:'blue', color2:'red'});
+                    }
+                    const draw = () => {
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        dna.forEach(d => {
+                            ctx.strokeStyle=d.color1; ctx.beginPath(); ctx.moveTo(d.x1, d.y1); ctx.lineTo(d.x1, d.y1+30); ctx.stroke();
+                            ctx.strokeStyle=d.color2; ctx.beginPath(); ctx.moveTo(d.x2, d.y2); ctx.lineTo(d.x2, d.y2+30); ctx.stroke();
+                        });
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'biology-osmosis': (ctx, canvas) => {
+                    let sideA = []; let sideB = [];
+                    for(let i=0; i<50; i++) sideA.push({x: Math.random()*canvas.width/2, y: Math.random()*canvas.height, color:'blue'});
+                    for(let i=0; i<100; i++) sideB.push({x: canvas.width/2 + Math.random()*canvas.width/2, y: Math.random()*canvas.height, color:'red'});
+                    const draw = () => {
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        ctx.strokeStyle='gray'; ctx.beginPath(); ctx.moveTo(canvas.width/2, 0); ctx.lineTo(canvas.width/2, canvas.height); ctx.stroke();
+                        sideA.forEach(p => {
+                            p.x += (Math.random()-0.5)*3; p.y += (Math.random()-0.5)*3;
+                            if(p.x > canvas.width/2) p.x = canvas.width/2;
+                            ctx.beginPath(); ctx.arc(p.x,p.y,5,0,Math.PI*2); ctx.fillStyle=p.color; ctx.fill();
+                        });
+                        sideB.forEach(p => {
+                            p.x += (Math.random()-0.5)*3; p.y += (Math.random()-0.5)*3;
+                            if(p.x < canvas.width/2) p.x = canvas.width/2;
+                            ctx.beginPath(); ctx.arc(p.x,p.y,5,0,Math.PI*2); ctx.fillStyle=p.color; ctx.fill();
+                        });
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'biology-neuron': (ctx, canvas) => {
+                    let signal = {x: 10, y: canvas.height/2, vx: 5, active: false};
+                    const draw = () => {
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        ctx.strokeStyle='green'; ctx.lineWidth=5; ctx.beginPath(); ctx.moveTo(0, canvas.height/2); ctx.lineTo(canvas.width, canvas.height/2); ctx.stroke();
+                        if(!signal.active){ signal.active = true; }
+                        if(signal.active){
+                            signal.x += signal.vx;
+                            ctx.beginPath(); ctx.arc(signal.x, signal.y, 10, 0, Math.PI*2); ctx.fillStyle='blue'; ctx.fill();
+                            if(signal.x > canvas.width){ signal.x = 10; signal.active = false; }
+                        }
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'biology-photosynthesis': (ctx, canvas) => {
+                    let co2 = []; let h2o = [];
+                    for(let i=0; i<50; i++) co2.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, color:'gray'});
+                    for(let i=0; i<50; i++) h2o.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, color:'lightblue'});
+                    const draw = () => {
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        co2.forEach(p => {
+                            p.x += (Math.random()-0.5)*2; p.y += (Math.random()-0.5)*2;
+                            ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI*2); ctx.fillStyle=p.color; ctx.fill();
+                        });
+                        h2o.forEach(p => {
+                            p.x += (Math.random()-0.5)*2; p.y += (Math.random()-0.5)*2;
+                            ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI*2); ctx.fillStyle=p.color; ctx.fill();
+                        });
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'biology-virus-infection': (ctx, canvas) => {
+                    let cell = {x:canvas.width/2, y:canvas.height/2, radius: 50, color:'green'};
+                    let virus = {x:10, y:canvas.height/2, radius: 5, vx: 2, color:'red'};
+                    let infected = false;
+                    const draw = () => {
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        ctx.beginPath(); ctx.arc(cell.x, cell.y, cell.radius, 0, Math.PI*2); ctx.fillStyle=cell.color; ctx.fill();
+                        if(!infected){
+                            virus.x += virus.vx;
+                            const dist = Math.sqrt((cell.x-virus.x)**2+(cell.y-virus.y)**2);
+                            if(dist < cell.radius+virus.radius){ infected = true; }
+                        } else {
+                            cell.color = 'orange';
+                            ctx.fillStyle='red'; ctx.fillText('Infected!', cell.x-20, cell.y);
+                        }
+                        ctx.beginPath(); ctx.arc(virus.x, virus.y, virus.radius, 0, Math.PI*2); ctx.fillStyle=virus.color; ctx.fill();
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'biology-population-growth': (ctx, canvas) => {
+                    let population = 10;
+                    const carryingCapacity = 200;
+                    const draw = () => {
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        population = population + 0.5 * population * (1 - population/carryingCapacity);
+                        ctx.fillStyle='blue'; ctx.fillRect(0, canvas.height-population, canvas.width, population);
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                },
+                'biology-blood-flow': (ctx, canvas) => {
+                    let bloodCells = [];
+                    for(let i=0; i<50; i++) bloodCells.push({x: Math.random()*canvas.width, y: canvas.height/2 + (Math.random()-0.5)*100, vx: 5, color:'red'});
+                    const draw = () => {
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        ctx.strokeStyle='gray'; ctx.lineWidth=5;
+                        ctx.beginPath(); ctx.moveTo(0, canvas.height/2 - 50); ctx.lineTo(canvas.width, canvas.height/2-50); ctx.stroke();
+                        ctx.beginPath(); ctx.moveTo(0, canvas.height/2 + 50); ctx.lineTo(canvas.width, canvas.height/2+50); ctx.stroke();
+                        bloodCells.forEach(p => {
+                            p.x += p.vx;
+                            if(p.x > canvas.width) p.x=0;
+                            ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI*2); ctx.fillStyle=p.color; ctx.fill();
+                        });
+                        animationFrameId = requestAnimationFrame(draw);
+                    };
+                    draw();
+                }
+            };
+        });
+    </script>
+</body>
+</html>

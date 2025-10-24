@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a'
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'bounce-soft': 'bounceSoft 2s infinite',
+                        'gradient': 'gradient 6s ease infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'spin': 'spin 1s linear infinite'
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                        'mesh-gradient': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                        'card-gradient': 'linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * { font-family: 'Inter', sans-serif; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            min-height: 100vh;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+        }
+
+        .glass-card-solid {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark .glass-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .dark .glass-card-solid {
+            background: rgba(30, 41, 59, 0.95);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .floating-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        .shape:nth-child(1) { width: 120px; height: 120px; top: 10%; left: 10%; animation-delay: 0s; }
+        .shape:nth-child(2) { width: 80px; height: 80px; top: 60%; right: 10%; animation-delay: 2s; }
+        .shape:nth-child(3) { width: 60px; height: 60px; top: 30%; right: 30%; animation-delay: 4s; }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <div class="container mx-auto p-4 md:p-8 min-h-screen">
+        <header class="glass-card rounded-2xl p-6 mb-8 animate-fade-in">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="text-center md:text-left mb-4 md:mb-0">
+                    <h1 class="text-4xl md:text-5xl font-bold text-white mb-2">
+                        About <span class="gradient-text">Us</span>
+                    </h1>
+                    <p class="text-white/80 text-lg">Our mission, our vision, and our team</p>
+                </div>
+                <div class="flex gap-3 items-center">
+                    <button id="theme-toggle" class="glass-card p-3 rounded-xl text-white hover:bg-white/20 transition-all duration-300 group">
+                        <svg id="sun-icon" class="w-6 h-6 group-hover:rotate-180 transition-transform duration-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
+                        </svg>
+                        <svg id="moon-icon" class="w-6 h-6 group-hover:rotate-180 transition-transform duration-500 hidden" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                        </svg>
+                    </button>
+                    <a href="index.html" class="glass-card px-6 py-3 rounded-xl text-white hover:bg-white/20 transition-all duration-300 font-semibold">
+                        Back to Home
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <main id="main-content" class="space-y-8 animate-fade-in" style="animation-delay: 0.1s;">
+            <section class="glass-card-solid rounded-2xl p-8">
+                <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-4">Our Mission</h2>
+                <div class="w-20 h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mb-6"></div>
+                <p class="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
+                    Our mission is to empower individuals through accessible and innovative education. We believe that learning should be a lifelong journey, and our platform is designed to make that journey engaging, effective, and tailored to the needs of every student. We are committed to providing high-quality content and cutting-edge tools that break down barriers and open up new opportunities for learners worldwide.
+                </p>
+            </section>
+            
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="glass-card-solid rounded-2xl p-8 animate-fade-in" style="animation-delay: 0.2s;">
+                    <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-4">Our Vision</h2>
+                    <div class="w-20 h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mb-6"></div>
+                    <p class="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
+                        We envision a future where curiosity is the only prerequisite for learning. Our goal is to become the leading global platform for personalized education, leveraging technology to create a seamless, interactive, and inspiring learning ecosystem for all. We aim to foster a community of lifelong learners who are equipped to solve the world's most pressing challenges.
+                    </p>
+                </div>
+                
+                <div class="glass-card-solid rounded-2xl p-8 animate-fade-in" style="animation-delay: 0.3s;">
+                    <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-4">Our Team</h2>
+                    <div class="w-20 h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mb-6"></div>
+                    <p class="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
+                        We are a diverse team of educators, engineers, and designers passionate about redefining education. Our collaborative spirit and commitment to excellence drive us to build a platform that is not only powerful but also intuitive and delightful to use. We are constantly learning and evolving to ensure we provide the best possible experience for our users.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <script>
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        const setInitialTheme = () => {
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                document.documentElement.classList.add('dark');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                moonIcon.classList.add('hidden');
+                sunIcon.classList.remove('hidden');
+            }
+        };
+
+        const toggleTheme = () => {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+        };
+
+        themeToggleBtn.addEventListener('click', toggleTheme);
+        setInitialTheme();
+    </script>
+</body>
+</html>
