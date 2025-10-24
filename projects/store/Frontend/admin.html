@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/lucide-static@0.277.0/icons.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <header class="glass-header">
+    <h1>Admin Dashboard</h1>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </header>
+
+  <nav class="side-nav">
+    <button onclick="switchTab('dashboard')"><i class="lucide lucide-layout-dashboard"></i> Dashboard</button>
+    <button onclick="switchTab('products')"><i class="lucide lucide-package"></i> Products</button>
+    <button onclick="switchTab('orders')"><i class="lucide lucide-truck"></i> Orders</button>
+
+    <button onclick="switchTab('users')"><i class="lucide lucide-users"></i> Users</button>
+    <button onclick="switchTab('analytics')"><i class="lucide lucide-bar-chart-3"></i> Analytics</button>
+    <button onclick="switchTab('settings')"><i class="lucide lucide-settings"></i> Settings</button>
+
+  </nav>
+
+  <main>
+    <!-- Dashboard -->
+     
+    <section id="dashboard" class="tab">
+     <h2>Notifications</h2>
+<div id="alertList" class="alert-container"></div>
+       
+      <div class="cards" data-aos="fade-up">
+        <div class="card" id="total-products">Products: ...</div>
+        <div class="card" id="total-users">Users: ...</div>
+        <div class="card" id="total-orders">Orders: ...</div>
+      </div>
+      <canvas id="salesChart" height="120"></canvas>
+    </section>
+
+    <!-- Products -->
+<section id="products" class="tab hidden">
+  <div class="section-header">
+    <h2>🛍️ Manage Products</h2>
+    <div class="filters">
+      <input type="text" id="searchInput" placeholder="Search..." />
+      <select id="categoryFilter">
+        <option value="">All Categories</option>
+        <option value="Men">Men</option>
+        <option value="Women">Women</option>
+        <option value="Accessories">Accessories</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- ✅ UPDATED Product Form with State & Category Dropdown -->
+  <form id="productForm" enctype="multipart/form-data" class="product-form">
+    <input type="text" name="name" placeholder="Name" required />
+    <input type="number" name="price" placeholder="Price" required />
+    
+    <!-- ✅ New Dropdown for State -->
+   <select name="state" required>
+  <option value="">Select State / UT</option>
+
+  <!-- States -->
+  <option value="Andhra Pradesh">Andhra Pradesh</option>
+  <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+  <option value="Assam">Assam</option>
+  <option value="Bihar">Bihar</option>
+  <option value="Chhattisgarh">Chhattisgarh</option>
+  <option value="Goa">Goa</option>
+  <option value="Gujarat">Gujarat</option>
+  <option value="Haryana">Haryana</option>
+  <option value="Himachal Pradesh">Himachal Pradesh</option>
+  <option value="Jharkhand">Jharkhand</option>
+  <option value="Karnataka">Karnataka</option>
+  <option value="Kerala">Kerala</option>
+  <option value="Madhya Pradesh">Madhya Pradesh</option>
+  <option value="Maharashtra">Maharashtra</option>
+  <option value="Manipur">Manipur</option>
+  <option value="Meghalaya">Meghalaya</option>
+  <option value="Mizoram">Mizoram</option>
+  <option value="Nagaland">Nagaland</option>
+  <option value="Odisha">Odisha</option>
+  <option value="Punjab">Punjab</option>
+  <option value="Rajasthan">Rajasthan</option>
+  <option value="Sikkim">Sikkim</option>
+  <option value="Tamil Nadu">Tamil Nadu</option>
+  <option value="Telangana">Telangana</option>
+  <option value="Tripura">Tripura</option>
+  <option value="Uttar Pradesh">Uttar Pradesh</option>
+  <option value="Uttarakhand">Uttarakhand</option>
+  <option value="West Bengal">West Bengal</option>
+
+  <!-- Union Territories -->
+  <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+  <option value="Chandigarh">Chandigarh</option>
+  <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
+  <option value="Delhi">Delhi</option>
+  <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+  <option value="Ladakh">Ladakh</option>
+  <option value="Lakshadweep">Lakshadweep</option>
+  <option value="Puducherry">Puducherry</option>
+</select>
+
+
+    <!-- ✅ New Dropdown for Category -->
+    <select name="category" required>
+      <option value="">Select Category</option>
+      <option value="Men">Men</option>
+      <option value="Women">Women</option>
+    </select>
+
+    <input type="number" name="stock" placeholder="Stock" required />
+    <textarea name="description" placeholder="Description (optional)"></textarea>
+    <input type="file" name="image" id="imageInput" />
+    <img id="imagePreview" class="preview" alt="" />
+    
+    <button type="submit" id="submitBtn">Add Product</button>
+    <button type="button" id="cancelEditBtn" class="hidden">Cancel Edit</button>
+  </form>
+
+  <div id="toast" class="toast hidden"></div>
+  <div id="productList" class="product-grid"></div>
+</section>
+
+
+<!-- Orders -->
+<section id="orders" class="tab hidden">
+  <h2>Orders</h2>
+  <div id="orderList" class="grid"></div>
+</section>
+
+
+
+
+   <!-- Users -->
+<section id="users" class="tab hidden">
+  <div class="section-header">
+    <h2><i class="lucide lucide-users"></i> User Management</h2>
+  </div>
+
+  <div id="userList" class="user-grid"></div>
+</section>
+
+
+   <!-- Analytics -->
+<section id="analytics" class="tab hidden">
+  <div class="section-header">
+    <h2><i class="lucide lucide-pie-chart"></i> Analytics</h2>
+  </div>
+
+  <div class="analytics-grid">
+    <div class="card glass">
+      <h3>Monthly Sales</h3>
+      <canvas id="analyticsChart" height="100"></canvas>
+    </div>
+
+    <div class="card glass">
+      <h3>Product Uploads</h3>
+      <canvas id="uploadChart" height="100"></canvas>
+    </div>
+
+    <div class="card glass">
+      <h3>Top Categories</h3>
+      <canvas id="categoryChart" height="100"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- Settings -->
+<section id="settings" class="tab hidden" data-aos="fade-up">
+  <div class="settings-card glass">
+    <h2><i class="lucide lucide-settings"></i> Admin Settings</h2>
+
+    <form id="settingsForm">
+      <div class="form-group">
+        <label for="adminName">Name</label>
+        <input type="text" id="adminName" placeholder="Admin Name" required />
+      </div>
+
+      <div class="form-group">
+        <label for="adminEmail">Email</label>
+        <input type="email" id="adminEmail" readonly />
+      </div>
+
+      <hr />
+
+      <h3>Change Password</h3>
+      <div class="form-group">
+        <label for="currentPassword">Current Password</label>
+        <input type="password" id="currentPassword" placeholder="Current Password" />
+      </div>
+
+      <div class="form-group">
+        <label for="newPassword">New Password</label>
+        <input type="password" id="newPassword" placeholder="New Password" />
+      </div>
+
+      <button type="submit" class="btn-dark">Update Settings</button>
+    </form>
+  </div>
+</section>
+
+
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script src="admin.js"></script>
+  <script>
+  AOS.init();
+
+  // Tab switcher
+  function switchTab(tabId) {
+    document.querySelectorAll(".tab").forEach(tab => tab.classList.add("hidden"));
+    document.getElementById(tabId).classList.remove("hidden");
+  }
+
+  // Logout
+  function logout() {
+    localStorage.removeItem("token");
+    window.location.href = "login.html";
+  }
+  
+  </script>
+</body>
+</html>

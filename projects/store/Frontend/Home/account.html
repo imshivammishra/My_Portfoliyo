@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Account - W&M</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet"/>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #fff;
+      color: #111;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    nav.nav-bar {
+      max-width: 1280px;
+      margin: auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .nav-left, .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .nav-left a i, .nav-right i {
+      font-size: 20px;
+      color: #000;
+    }
+
+    .nav-center {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .nav-center img {
+      height: 44px;
+    }
+
+    .menu-icon {
+      display: none;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 999;
+    }
+
+    .mobile-sidebar {
+      position: fixed;
+      top: 0;
+      left: -100%;
+      width: 240px;
+      height: 100vh;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 2px 0 20px rgba(0,0,0,0.1);
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      transition: left 0.3s ease;
+      z-index: 1200;
+    }
+
+    .mobile-sidebar.open {
+      left: 0;
+    }
+
+    .mobile-sidebar a {
+      font-size: 18px;
+      margin-bottom: 1.5rem;
+      color: #111;
+    }
+
+    .close-btn {
+      font-size: 24px;
+      margin-bottom: 2rem;
+      align-self: flex-end;
+      cursor: pointer;
+    }
+
+    .account-wrapper {
+      max-width: 960px;
+      margin: 3rem auto;
+      background: #fdfdfd;
+      padding: 3rem 2rem;
+      border-radius: 20px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .profile-avatar {
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .profile-avatar img {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid #eee;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transition: box-shadow 0.3s;
+    }
+
+    .profile-avatar:hover img {
+      box-shadow: 0 0 0 3px #111;
+    }
+
+    .account-form h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 6px;
+      text-align: left;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 1.4rem;
+      padding: 14px;
+      background: #000;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #222;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 0.85rem;
+      padding: 2rem 0;
+      color: #666;
+      margin-top: 5rem;
+    }
+
+    @media (max-width: 768px) {
+      .nav-left, .nav-right {
+        display: none;
+      }
+
+      .menu-icon {
+        display: block;
+      }
+
+      .nav-center {
+        position: static;
+        transform: none;
+        margin: 0 auto;
+      }
+
+      .nav-center img {
+        height: 36px;
+      }
+
+      .account-wrapper {
+        grid-template-columns: 1fr;
+        padding: 2rem 1.5rem;
+        text-align: center;
+      }
+
+      .account-form {
+        margin-top: 2.5rem;
+      }
+
+      .account-form h1 {
+        font-size: 1.75rem;
+      }
+
+      .profile-avatar img {
+        width: 120px;
+        height: 120px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .account-wrapper {
+        padding: 2rem 1rem;
+      }
+
+      input, button {
+        font-size: 1rem;
+        padding: 12px;
+      }
+
+      .account-form h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <nav class="nav-bar">
+    <i class="ri-menu-line menu-icon" id="menuToggle"></i>
+    <div class="nav-center">
+      <img src="../assets/PNG/Wo&MenLogo.png" alt="W&M Logo" />
+    </div>
+    <div class="nav-left">
+      <a href="index.html"><i class="ri-home-5-line"></i></a>
+      <a href="shop.html"><i class="ri-shopping-bag-line"></i></a>
+      <a href="cart.html"><i class="ri-shopping-cart-line"></i></a>
+      <a href="orders.html"><i class="ri-file-list-line"></i></a>
+    </div>
+    <div class="nav-right">
+      <i class="ri-logout-box-r-line" id="logout-icon" title="Logout" style="cursor: pointer;"></i>
+    </div>
+  </nav>
+
+  <div class="mobile-sidebar" id="mobileSidebar">
+    <i class="ri-close-line close-btn" id="closeSidebar"></i>
+    <a href="index.html"><i class="ri-home-line"></i> &nbsp; Home</a>
+    <a href="shop.html"><i class="ri-shopping-bag-line"></i> &nbsp; Shop</a>
+    <a href="cart.html"><i class="ri-shopping-cart-line"></i> &nbsp; Cart</a>
+    <a href="orders.html"><i class="ri-file-list-line"></i> &nbsp; Orders</a>
+    <a href="#" id="sidebarLogout"><i class="ri-logout-box-line"></i> &nbsp; Logout</a>
+  </div>
+</header>
+
+<!-- Main Content -->
+<section class="account-wrapper">
+  <div class="profile-avatar">
+    <img id="avatar-preview" src="../assets/user.png" alt="Profile Picture">
+    <input type="file" id="avatar-input" accept="image/*" style="display: none;">
+  </div>
+
+  <div class="account-form">
+    <h1>My Account</h1>
+    <form id="update-form">
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" required />
+      </div>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" required />
+      </div>
+      <div class="form-group">
+        <label for="password">New Password</label>
+        <input type="password" id="password" placeholder="Leave blank to keep current" />
+      </div>
+      <button type="submit">Save Changes</button>
+    </form>
+  </div>
+</section>
+
+<div class="footer">&copy; 2025 W&M. All rights reserved.</div>
+
+<!-- Scripts -->
+<script>
+  const backendURL = "http://localhost:5000/api";
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    window.location.href = "login.html";
+  }
+
+  async function fetchUserDetails() {
+    try {
+      const res = await fetch(`${backendURL}/auth/me`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (!res.ok) throw new Error("Unauthorized");
+
+      const user = await res.json();
+      document.getElementById("name").value = user.name;
+      document.getElementById("email").value = user.email;
+
+      if (user.avatar) {
+        document.getElementById("avatar-preview").src = `${backendURL.replace('/api','')}/uploads/${user.avatar}?v=${Date.now()}`;
+      }
+    } catch (err) {
+      console.error("Failed to fetch user", err);
+      localStorage.removeItem("token");
+      window.location.href = "login.html";
+    }
+  }
+
+  fetchUserDetails();
+
+  document.getElementById("logout-icon").addEventListener("click", () => {
+    localStorage.removeItem("token");
+    window.location.href = "login.html";
+  });
+
+  document.getElementById("sidebarLogout").addEventListener("click", () => {
+    localStorage.removeItem("token");
+    window.location.href = "login.html";
+  });
+
+  document.getElementById("update-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const payload = { name, email };
+    if (password) payload.password = password;
+
+    try {
+      const res = await fetch(`${backendURL}/auth/update`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) throw new Error("Update failed");
+
+      alert("Profile updated successfully.");
+      document.getElementById("password").value = "";
+    } catch (err) {
+      alert("Failed to update profile.");
+      console.error(err);
+    }
+  });
+
+  const avatarPreview = document.getElementById("avatar-preview");
+  const avatarInput = document.getElementById("avatar-input");
+
+  avatarPreview.addEventListener("click", () => {
+    avatarInput.click();
+  });
+
+  avatarInput.addEventListener("change", async () => {
+    const file = avatarInput.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("avatar", file);
+
+    try {
+      const res = await fetch(`${backendURL}/auth/upload-avatar`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      if (!res.ok) throw new Error("Upload failed");
+
+      const newUrl = `${backendURL.replace('/api','')}/uploads/${file.name}?v=${Date.now()}`;
+      document.getElementById("avatar-preview").src = newUrl;
+
+      alert("Avatar updated successfully.");
+    } catch (err) {
+      alert("Failed to upload avatar.");
+      console.error(err);
+    }
+  });
+
+  document.getElementById("menuToggle").addEventListener("click", () => {
+    document.getElementById("mobileSidebar").classList.add("open");
+  });
+
+  document.getElementById("closeSidebar").addEventListener("click", () => {
+    document.getElementById("mobileSidebar").classList.remove("open");
+  });
+</script>
+
+</body>
+</html>

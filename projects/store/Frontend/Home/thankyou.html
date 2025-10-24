@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Thank You – W&M</title>
+  <link rel="stylesheet" href="home-style.css" />
+  <!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" />
+  <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+</head>
+<body class="light-mode">
+  <!-- Header -->
+ <header class="blur-header">
+  <nav class="nav-bar">
+    <!-- Left side: empty for spacing -->
+     <div class="nav-left header-icons">
+      <a href="index.html" title="Home"><i data-lucide="home"></i></a>
+      <a href="shop.html" title="Shop"><i data-lucide="shopping-bag"></i></a>
+      <a href="cart.html" title="Cart"><i data-lucide="shopping-cart"></i></a>
+      <a href="orders.html" title="Orders"><i data-lucide="package"></i></a>
+    </div>
+
+    <!-- Center: logo -->
+    <div class="nav-center logo">
+      <img src="../assets/PNG/Wo&MenLogo.png" alt="Logo" />
+    </div>
+
+    <!-- Right side: user login/logout -->
+    <div class="nav-right user-actions">
+      <span id="user-info"></span>
+      <button id="login-btn" title="Login"><i data-lucide="log-in"></i></button>
+      <button id="logout-btn" title="Logout"><i data-lucide="log-out"></i></button>
+    </div>
+  </nav>
+</header>
+
+  <!-- Thank You Section -->
+  <main class="thankyou-section" data-aos="zoom-in">
+    <div class="thankyou-card">
+      <i class="ri-checkbox-circle-line success-icon"></i>
+      <h1>Thank You!</h1>
+      <p>Your order has been placed successfully.</p>
+      <p>We’ve sent a confirmation email to your inbox.</p>
+      <div class="thankyou-buttons">
+        <a href="index.html" class="btn-primary">Back to Home</a>
+        <a href="track.html" class="btn-secondary">Track Order</a>
+      </div>
+    </div>
+  </main>
+
+  <script src="main.js"></script>
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+  <script>AOS.init();</script>
+</body>
+</html>
+
+

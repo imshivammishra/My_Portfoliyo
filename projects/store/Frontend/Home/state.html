@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>State Products - W&M</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css"/>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #fff;
+      color: #000;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      text-align: center;
+      padding: 3rem 1rem 1rem;
+    }
+
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .category-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .category-buttons button {
+      padding: 0.7rem 2rem;
+      font-size: 1rem;
+      background: #000;
+      color: #fff;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .category-buttons button.active,
+    .category-buttons button:hover {
+      background: #333;
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 2rem;
+      padding: 2rem;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .product-card {
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transition: transform 0.3s;
+      cursor: pointer;
+    }
+
+    .product-card:hover {
+      transform: scale(1.02);
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+    }
+
+    .product-info {
+      padding: 1rem;
+    }
+
+    .product-info h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      margin: 0 0 0.5rem;
+    }
+
+    .product-info p {
+      margin: 0;
+      font-size: 0.95rem;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1 id="state-name">Loading...</h1>
+    <div class="category-buttons">
+      <button onclick="loadCategory('Men')" id="btn-men">Men</button>
+      <button onclick="loadCategory('Women')" id="btn-women">Women</button>
+    </div>
+  </header>
+
+  <section class="products-grid" id="product-container">
+    <!-- Products will appear here -->
+  </section>
+
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const stateName = urlParams.get("name");
+    const stateNameElem = document.getElementById("state-name");
+    const productContainer = document.getElementById("product-container");
+
+    stateNameElem.innerText = stateName;
+
+    function highlightButton(category) {
+      document.getElementById("btn-men").classList.remove("active");
+      document.getElementById("btn-women").classList.remove("active");
+      document.getElementById(`btn-${category.toLowerCase()}`).classList.add("active");
+    }
+
+    async function loadCategory(category) {
+      highlightButton(category);
+      productContainer.innerHTML = "<p style='text-align:center;'>Loading products...</p>";
+
+      try {
+        const res = await fetch(`http://localhost:5000/api/products?state=${encodeURIComponent(stateName)}&category=${category}`);
+        const data = await res.json();
+
+        if (data.length === 0) {
+          productContainer.innerHTML = "<p style='text-align:center;'>No products found.</p>";
+          return;
+        }
+
+        productContainer.innerHTML = data.map(product => `
+          <div class="product-card" data-aos="fade-up">
+            <img src="${product.image}" alt="${product.name}" />
+            <div class="product-info">
+              <h3>${product.name}</h3>
+              <p>₹${product.price}</p>
+            </div>
+          </div>
+        `).join("");
+      } catch (err) {
+        productContainer.innerHTML = "<p style='text-align:center;'>Failed to load products.</p>";
+        console.error(err);
+      }
+    }
+
+    // Default load Men products on page load
+    window.onload = () => {
+      loadCategory("Men");
+    };
+  </script>
+</body>
+</html>

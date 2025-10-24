@@ -1,0 +1,672 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Base styles for SEO & responsiveness */
+html {
+  font-family: 'Inter', sans-serif;
+  scroll-behavior: smooth;
+  background: var(--bg);
+  color: var(--text);
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+/* Light theme variables */
+:root {
+  --bg: #fff;
+  --text: #111;
+  --primary: #000;
+  --secondary-text: #555;
+  --card-bg: #fff;
+  --border-color: #ddd;
+  --shadow: rgba(0,0,0,0.1);
+  --btn-bg: #000;
+  --btn-hover-bg: #222;
+}
+
+/* Night theme variables for toggle feature */
+[data-theme="dark"] {
+  --bg: #121212;
+  --text: #eee;
+  --primary: #fff;
+  --secondary-text: #bbb;
+  --card-bg: #1e1e1e;
+  --border-color: #333;
+  --shadow: rgba(0,0,0,0.7);
+  --btn-bg: #fff;
+  --btn-hover-bg: #ddd;
+}
+
+/* Container */
+.container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* Navigation Bar */
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: saturate(180%) blur(15px);
+  border-bottom: 1px solid var(--border-color);
+  z-index: 1000;
+  transition: background-color 0.5s ease;
+}
+[data-theme="dark"] .navbar {
+  background: rgba(18, 18, 18, 0.95);
+}
+.navbar .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+}
+.logo {
+  font-weight: 700;
+  font-size: 1.6rem;
+  color: var(--text);
+  text-decoration: none;
+}
+.logo .dot {
+  color: var(--primary);
+}
+.nav-links {
+  display: flex;
+  gap: 2rem;
+}
+.nav-links a {
+  font-weight: 600;
+  color: var(--secondary-text);
+  text-decoration: none;
+  position: relative;
+  transition: color 0.3s ease;
+}
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--primary);
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0%;
+  height: 3px;
+  background: var(--primary);
+  transition: width 0.3s ease;
+}
+.nav-links a:hover::after,
+.nav-links a.active::after {
+  width: 100%;
+}
+
+/* Mobile menu button for responsiveness */
+.menu-btn {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.menu-btn span {
+  height: 3px;
+  width: 25px;
+  background: var(--text);
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+/* Responsive Navbar for mobile devices */
+@media(max-width: 768px) {
+  .menu-btn {
+    display: flex;
+  }
+  .nav-links {
+    position: fixed;
+    top: 64px;
+    right: 0;
+    width: 220px;
+    background: var(--card-bg);
+    flex-direction: column;
+    /* Changed height: 0 to max-height: 0 for dynamic content support */
+    max-height: 0; 
+    overflow: hidden;
+    box-shadow: -4px 0 15px var(--shadow);
+    padding: 0 1.5rem;
+    transition: max-height 0.3s ease;
+    border-radius: 0 0 10px 10px; /* Added slight curve to the bottom */
+  }
+  /* Use a large max-height for dynamic content instead of a fixed height */
+  .nav-links.open {
+    max-height: 400px;
+    padding: 1rem 1.5rem; /* Add vertical padding when open */
+    border: 1px solid var(--border-color); /* Add border for definition */
+    border-top: none;
+  }
+  .nav-links a {
+    padding: 0.75rem 0; /* Adjusted padding */
+    font-size: 1.1rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .nav-links a:last-child {
+      border-bottom: none;
+  }
+}
+
+/* Theme toggle button styling */
+#theme-toggle {
+  background: transparent;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+  font-weight: 600;
+  border-radius: 30px;
+  padding: 6px 14px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.3s ease;
+}
+#theme-toggle:hover {
+  background: var(--primary);
+  color: var(--bg);
+}
+
+/* HERO Section styling */
+.hero {
+  margin-top: 80px;
+  padding: 4rem 0 6rem;
+}
+.hero-container {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.hero-text {
+  flex: 1 1 400px;
+  min-width: 320px;
+}
+.hero-text h1 {
+  font-size: 3.2rem;
+  font-weight: 900;
+  margin-bottom: 1rem;
+  line-height: 1.1;
+}
+.hero-text p {
+  font-size: 1.3rem;
+  font-weight: 500;
+  margin-bottom: 2.5rem;
+  color: var(--secondary-text);
+  line-height: 1.5;
+}
+.btn-primary {
+  padding: 1rem 3rem;
+  background: var(--btn-bg);
+  color: var(--bg);
+  border-radius: 50px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  white-space: nowrap; /* Prevent button text from wrapping */
+}
+.btn-primary:hover {
+  background-color: var(--btn-hover-bg);
+  transform: translateY(-5px);
+}
+.hero-image {
+  flex: 1 1 380px;
+  max-width: 420px;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.12);
+}
+.hero-image img {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.hero-image:hover img {
+  transform: scale(1.05);
+}
+
+/* Sections styles: About, Skills, Certificates, Projects, Contact */
+.section {
+  padding: 6rem 2rem;
+  text-align: center;
+}
+.section-title {
+  font-size: 2.75rem;
+  font-weight: 900;
+  margin-bottom: 3rem;
+  color: var(--primary);
+}
+
+/* About section */
+.about-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+  max-width: 1080px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+  text-align: left;
+}
+.about-photo {
+  flex: 1 1 320px;
+  max-width: 320px;
+  border-radius: 20px;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.1);
+}
+.about-text {
+  flex: 2 1 500px;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--secondary-text);
+}
+.about-social-links {
+  margin-top: 24px;
+  display: flex;
+  gap: 24px;
+}
+.about-social-links a {
+  width: 30px;
+  height: 30px;
+  fill: var(--secondary-text);
+  transition: fill 0.3s ease;
+}
+.about-social-links a:hover {
+  fill: var(--primary);
+}
+.about-social-links svg {
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Skills grid */
+.skills-grid {
+  display: grid;
+  max-width: 720px;
+  margin: 0 auto;
+  gap: 1.8rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  text-align: left;
+}
+.skill {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.skill h3 {
+  font-weight: 700;
+  font-size: 1.25rem;
+  margin-bottom: 0.2rem;
+  color: var(--primary);
+}
+.skill-bar {
+  background: var(--bg);
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.15);
+  border-radius: 12px;
+  height: 18px;
+  overflow: hidden;
+  border: 1.5px solid var(--border-color);
+}
+.skill-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), #444);
+  border-radius: 12px;
+  width: 0;
+  animation: fillSkill 1.2s ease forwards;
+}
+
+/* Grid cards (Projects) */
+.grid {
+  display: grid;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  gap: 2.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  text-align: left;
+}
+.card {
+  background: var(--card-bg);
+  border-radius: 22px;
+  box-shadow: 0 16px 40px var(--shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.14);
+}
+.card img {
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+.card:hover img {
+  transform: scale(1.07);
+}
+.card-content {
+  padding: 1.8rem 1.6rem 2rem;
+}
+.card-content h3 {
+  font-weight: 800;
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  color: var(--primary);
+}
+.card-content p {
+  color: var(--secondary-text);
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+.btn-outline {
+  display: inline-block;
+  padding: 0.6rem 1.75rem;
+  border-radius: 50px;
+  border: 2px solid var(--primary);
+  background: transparent;
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+.btn-outline:hover {
+  background: var(--primary);
+  color: var(--bg);
+}
+
+/* Certificates with images */
+.certificates-list {
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+  padding: 0 1.5rem;
+}
+.certificate-item {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+  background: var(--card-bg);
+  border-radius: 20px;
+  box-shadow: 0 14px 42px var(--shadow);
+  padding: 2rem 2.2rem;
+  transition: box-shadow 0.3s ease;
+}
+.certificate-item:hover {
+  box-shadow: 0 24px 60px var(--shadow);
+  cursor: default;
+}
+.certificate-image {
+  width: 140px; 
+  height: 100px;
+  object-fit: contain;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+.certificate-item h3 {
+  color: var(--primary);
+  font-size: 1.5rem;
+  margin-bottom: 0.8rem;
+}
+.certificate-item .cert-year {
+  font-weight: 600;
+  color: var(--secondary-text);
+  font-size: 1rem;
+  margin-left: 8px;
+}
+.certificate-item p {
+  font-size: 1rem;
+  color: var(--secondary-text);
+  margin-bottom: 0.4rem;
+}
+/* Ensure the button stays aligned correctly on desktop */
+.certificate-item .btn-outline {
+  padding: 0.55rem 1.6rem;
+  font-weight: 600;
+  border-radius: 50px;
+  text-decoration: none;
+  align-self: flex-start;
+  margin-top: 0.5rem; /* Added small margin for separation */
+}
+
+/* Contact Section */
+.contact-container {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+}
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+  font-size: 1rem;
+}
+.contact-form input,
+.contact-form textarea {
+  padding: 1rem 1.3rem;
+  border-radius: 20px;
+  border: 1.8px solid var(--border-color);
+  transition: border-color 0.3s ease;
+  font-family: 'Inter', sans-serif;
+  resize: vertical;
+  background: var(--bg);
+  color: var(--text);
+}
+.contact-form input:focus,
+.contact-form textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+.contact-form button {
+  padding: 1rem 0;
+  background: var(--btn-bg);
+  color: var(--bg);
+  border: none;
+  border-radius: 50px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.contact-form button:hover {
+  background: var(--btn-hover-bg);
+}
+
+/* Footer styles */
+.footer {
+  background: var(--bg);
+  border-top: 1px solid var(--border-color);
+  padding: 2.8rem 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--secondary-text);
+  transition: background-color 0.5s, color 0.5s;
+}
+.footer-content {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.social-icons {
+  display: flex;
+  gap: 1.5rem;
+}
+.icon {
+  width: 28px;
+  height: 28px;
+  fill: var(--secondary-text);
+  transition: fill 0.3s ease;
+}
+.social-icons a:hover .icon {
+  fill: var(--primary);
+}
+
+/* Animations */
+[data-animate] {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.75s ease-out;
+}
+[data-animate].visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/*
+|--------------------------------------------------------------------------
+| PROFESSIONAL MOBILE RESPONSIVENESS (MAX-WIDTH: 900PX)
+|--------------------------------------------------------------------------
+*/
+@media(max-width: 900px) {
+  /* General Section Adjustments */
+  .section {
+    padding: 4rem 1.5rem; /* Reduced vertical padding */
+  }
+  .section-title {
+    font-size: 2.25rem; /* Slightly smaller title for tablets */
+    margin-bottom: 2rem;
+  }
+  
+  /* Hero & About: Stacking and Centering */
+  .hero-container,
+  .about-container {
+    flex-direction: column; /* Force vertical stacking */
+    text-align: center; 
+    gap: 2rem; /* Reduced gap for mobile */
+  }
+
+  /* Hero Specifics */
+  .hero-text {
+    text-align: center;
+  }
+  .hero-text h1 {
+    font-size: 2.5rem; /* Main heading size for mobile */
+  }
+  .hero-text p {
+    font-size: 1.1rem;
+  }
+  .hero-image {
+    max-width: 90%; /* Control image size */
+    box-shadow: 0 15px 30px var(--shadow); /* Softer shadow for mobile */
+  }
+  
+  /* About Specifics */
+  .about-photo {
+    max-width: 70%; /* Image prominence on mobile */
+  }
+  .about-text {
+    padding: 0 1rem;
+    text-align: center;
+  }
+  .about-social-links {
+    justify-content: center; /* Center social icons */
+  }
+
+  /* Certificates: Stack Image and Text for Mobile */
+  .certificate-item {
+    flex-direction: column; /* Stack image, text, button vertically */
+    align-items: center;
+    text-align: center;
+    padding: 1.5rem; /* Adjusted padding */
+  }
+  .certificate-image {
+    width: 100%; /* Image takes full width of the item container */
+    max-width: 200px; /* Max width to prevent distortion */
+    height: auto;
+    margin-bottom: 1rem;
+  }
+  .certificate-item h3 {
+    font-size: 1.3rem;
+  }
+  .certificate-item p {
+    margin-bottom: 1rem;
+  }
+  .certificate-item .btn-outline {
+    align-self: center; /* Center the button in the stacked layout */
+    width: 100%; /* Make button full width for easy tapping */
+    max-width: 280px;
+    padding: 0.8rem 1.75rem;
+  }
+
+  /* Project Grid */
+  .grid {
+    grid-template-columns: 1fr; /* Single column layout for projects */
+  }
+  .card-content {
+      text-align: center;
+  }
+  .card-content .btn-outline {
+      width: 100%; /* Full width button in project card */
+      text-align: center;
+  }
+  
+  /* Buttons: Ensure full width for better touch targets */
+  .btn-primary,
+  .btn-outline {
+    width: 100%;
+    max-width: 320px; /* Optional: cap max width for aesthetics */
+    text-align: center;
+    padding: 1rem 1.5rem;
+    font-size: 1.1rem;
+    margin: 0 auto; /* Center block buttons */
+  }
+}
+
+/*
+|--------------------------------------------------------------------------
+| EXTRA SMALL SCREENS (MAX-WIDTH: 480PX)
+|--------------------------------------------------------------------------
+| For tighter controls on very small phones.
+*/
+@media(max-width: 480px) {
+  /* General Spacing */
+  .container {
+    padding: 0 1rem;
+  }
+  
+  /* Typography */
+  .section-title {
+    font-size: 2rem;
+  }
+  .hero-text h1 {
+    font-size: 2rem;
+  }
+  .hero-text p {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Footer Layout */
+  .footer-content {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .social-icons {
+    justify-content: center;
+  }
+}

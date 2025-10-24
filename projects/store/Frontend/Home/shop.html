@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Shop - W&M</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet"/>
+    <style>
+       
+    @font-face {
+  font-family: 'Wednesday';
+  src: url('../Fonts/Wednesday.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #fff;
+      color: #111;
+
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    nav.nav-bar {
+      max-width: 1280px;
+      margin: auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      flex-wrap: wrap;
+    }
+
+    .nav-left, .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .nav-left a i, .nav-right i {
+      font-size: 20px;
+      color: #000;
+    }
+
+    .nav-center {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .nav-center .textlogo{
+      font-family: 'wednesday';
+      font-size: 60px;
+      letter-spacing: 0px;
+      /* height: 100px; */
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
+    }
+
+    .nav-right #user-info {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+     .menu-icon {
+    display: none;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 999;
+  }
+
+  /* Sidebar */
+  .mobile-sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 250px;
+    height: 100vh;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 2px 0 20px rgba(0,0,0,0.1);
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    transition: left 0.3s ease;
+  }
+
+  .mobile-sidebar.open {
+    left: 0;
+  }
+
+  .mobile-sidebar a {
+    font-size: 18px;
+    margin-bottom: 1.5rem;
+    color: #111;
+  }
+
+  .close-btn {
+    font-size: 24px;
+    margin-bottom: 2rem;
+    align-self: flex-end;
+    cursor: pointer;
+  }
+
+  /* Mobile Layout */
+  @media (max-width: 768px) {
+    .nav-left,
+    .nav-right {
+      display: none;
+    }
+
+    .menu-icon {
+      display: block;
+    }
+
+    .nav-bar {
+      justify-content: space-between;
+    }
+
+    .nav-center .textlogo{
+      flex: unset;
+      margin: 0 auto;
+      font-size: 40px;
+    }
+  }
+        h1 {
+            font-family: 'Playfair Display', serif;
+            text-align: center;
+            font-size: 2.2rem;
+            margin: 2rem 0 1rem;
+        }
+
+        .back-btn {
+            font-size: 1.8rem;
+            border: none;
+            background: none;
+            cursor: pointer;
+            position: absolute;
+            left: 16px;
+            top: 100px;
+            display: none;
+            z-index: 1001;
+        }
+
+        .back-btn i {
+            color: #111;
+        }
+
+        .section {
+            max-width: 1200px;
+            margin: auto;
+            padding: 2rem 1rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .card {
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .card:hover { transform: scale(1.02); }
+
+        .card img {
+            width: 100%;
+            height: 360px;
+            object-fit: cover;
+        }
+        .imagess img{
+            height: 760px;
+            object-fit: cover;
+        }
+
+        .card .overlay {
+            position: absolute;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            width: 100%;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .card .overlay h3 {
+            color: #fff;
+            font-size: 1.4rem;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+            padding: 0 1rem;
+        }
+
+        .product-card {
+            background: #fff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem;
+            text-align: center;
+            min-height: 330px;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 190px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .product-card h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #111;
+            margin-bottom: 0.4rem;
+        }
+
+        .product-card p {
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        .product-card button {
+            margin-top: 0.8rem;
+            padding: 7px 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: none;
+            border-radius: 50px;
+            background: #111;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-card button:hover {
+            background: #000;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+        }
+
+
+        @media (max-width: 768px) {
+            header { flex-direction: column; gap: 10px; }
+        }
+
+
+
+
+        footer.site-footer {
+            background: #f7f7f7;
+            padding: 4rem 2rem 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            gap: 3rem;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .footer-column {
+            flex: 1 1 220px;
+        }
+
+        .footer-column h4 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-column ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-column ul li a {
+            color: #444;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-icons a i {
+            font-size: 18px;
+            color: #000;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            font-size: 0.9rem;
+            color: #777;
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+        @media (min-width: 769px) {
+            #stateSection .card img {
+                height: 480px; /* bigger image height on desktop */
+            }
+        }
+
+        @media (max-width: 768px) {
+            #stateSection .card {
+                opacity: 0;
+                transform: translateY(40px);
+                transition: transform 0.6s ease, opacity 0.6s ease;
+            }
+
+            [data-aos="fade-left"] {
+                transform: translateX(-40px);
+                opacity: 0;
+            }
+
+            [data-aos="fade-right"] {
+                transform: translateX(40px);
+                opacity: 0;
+            }
+
+            [data-aos="zoom-in"] {
+                transform: scale(0.95);
+                opacity: 0;
+            }
+
+            [data-aos].aos-animate {
+                opacity: 1 !important;
+                transform: none !important;
+            }
+        }
+
+
+        @media (min-width: 769px) {
+            #stateSection .card {
+                background: rgba(255, 255, 255, 0.5);
+                border-radius: 24px;
+                overflow: hidden;
+                box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+                transition: transform 0.4s ease, box-shadow 0.4s ease;
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+            }
+
+            #stateSection .card:hover {
+                transform: translateY(-10px) scale(1.03);
+                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+            }
+
+            #stateSection .card img {
+                height: 480px;
+                width: 100%;
+                object-fit: cover;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            }
+
+            #stateSection .card .overlay {
+                background: rgba(0, 0, 0, 0.4);
+                backdrop-filter: blur(4px);
+                padding: 1rem;
+            }
+
+            #stateSection .card .overlay h3 {
+                color: #fff;
+                font-size: 1.6rem;
+                font-family: 'Playfair Display', serif;
+                letter-spacing: 0.5px;
+                font-weight: 500;
+            }
+        }
+
+
+
+        @media (min-width: 1024px) {
+            #stateSection .grid {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 3rem;
+                padding-top: 2rem;
+            }
+
+            #stateSection .card {
+                width: 30%;
+                max-width: 360px;
+                height: 550px;
+                border-radius: 32px;
+                background: rgba(255, 255, 255, 0.4);
+                overflow: hidden;
+                position: relative;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+                backdrop-filter: blur(14px);
+                -webkit-backdrop-filter: blur(14px);
+                transition: transform 0.5s ease, box-shadow 0.5s ease;
+            }
+
+            #stateSection .card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 16px 60px rgba(0, 0, 0, 0.2);
+            }
+
+            #stateSection .card img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                filter: brightness(90%) contrast(105%);
+                transition: filter 0.3s ease;
+            }
+
+            #stateSection .card:hover img {
+                filter: brightness(100%) contrast(110%);
+            }
+
+            #stateSection .card .overlay {
+                position: absolute;
+                bottom: 0;
+                width: 100%;
+                background: linear-gradient(to top, rgba(0,0,0,0.6), rgba(0,0,0,0.2), transparent);
+                padding: 1.5rem;
+                text-align: center;
+                backdrop-filter: blur(6px);
+            }
+
+            #stateSection .card .overlay h3 {
+                color: #fff;
+                font-size: 1.8rem;
+                font-family: 'wednesday';
+                letter-spacing: 4px;
+                font-weight: 500;
+            }
+        }
+
+
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+
+        .shake-cart {
+            animation: shake 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <nav class="nav-bar">
+        <i class="ri-menu-line menu-icon" id="menuToggle"></i>
+
+        <div class="nav-center">
+      <!-- <img src="../assets/PNG/Wo&MenLogo.png" alt="W&M Logo"> -->
+    <div class="textlogo"><a href="index.html">wo & men</a></div>
+    </div>
+
+        <div class="nav-left">
+            <a href="index.html"><i class="ri-home-line"></i></a>
+            <a href="shop.html"><i class="ri-shopping-bag-line"></i></a>
+            <a href="cart.html"><i class="ri-shopping-cart-line"></i></a>
+            <a href="orders.html"><i class="ri-file-list-2-line"></i></a>
+        </div>
+        <div class="nav-right">
+            <span id="user-info"></span>
+            <img id="nav-avatar" style="width:30px; height:30px; border-radius:50%; object-fit:cover; cursor:pointer;">
+            <button id="logout-btn" class="icon-btn" style="display: none;"><i class="ri-logout-box-line"></i></button>
+        </div>
+
+    </nav>
+
+   <!-- Mobile sidebar -->
+ <div class="mobile-sidebar" id="mobileSidebar">
+  <i class="ri-close-line close-btn" id="closeSidebar"></i>
+
+  <!-- ✅ Mobile user profile (NEW) -->
+  <!-- 📱 Mobile User Profile (Elegant UI) -->
+<div id="mobile-user" style="
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  padding: 1rem 0;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.65);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+">
+  <img id="mobile-avatar" 
+       src="../assets/user.png" 
+       alt="User"
+       style="
+         width: 70px;
+         height: 70px;
+         border-radius: 50%;
+         object-fit: cover;
+         box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+         cursor: pointer;
+         transition: transform 0.3s ease;
+       "
+       onmouseover="this.style.transform='scale(1.05)'"
+       onmouseout="this.style.transform='scale(1)'"
+  >
+  <div id="mobile-name" style="
+    font-size: 15px;
+    font-weight: 500;
+    color: #111;
+    letter-spacing: 0.3px;
+  ">Guest</div>
+</div>
+
+
+  <a href="index.html"><i class="ri-home-line"></i> &nbsp; Home</a>
+  <a href="shop.html"><i class="ri-shopping-bag-line"></i> &nbsp; Shop</a>
+  <a href="cart.html"><i class="ri-shopping-cart-line"></i> &nbsp; Cart</a>
+  <a href="orders.html"><i class="ri-file-list-2-line"></i> &nbsp; Orders</a>
+  <a href="login.html" id="mobile-login"><i class="ri-user-line"></i> &nbsp; Login</a>
+  <a href="#" id="mobile-logout" style="display: none;"><i class="ri-logout-box-line"></i> &nbsp; Logout</a>
+</div>
+
+</header>
+
+
+
+
+
+
+<button class="back-btn" id="backBtn" onclick="handleBack()"><i class="ri-arrow-left-line"></i></button>
+<h1 id="mainTitle">Explore by State</h1>
+
+<section class="section" id="stateSection">
+    <div class="grid">
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Andhra Pradesh')">
+            <img src="../assets/img1.png" alt="Andhra Pradesh" />
+            <div class="overlay"><h3>Andhra Pradesh</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Arunachal Pradesh')">
+            <img src="../assets/img2.png" alt="Arunachal Pradesh" />
+            <div class="overlay"><h3>Arunachal Pradesh</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Assam')">
+            <img src="../assets/img1.png" alt="Assam" />
+            <div class="overlay"><h3>Assam</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Bihar')">
+            <img src="../assets/img2.png" alt="Bihar" />
+            <div class="overlay"><h3>Bihar</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Chhattisgarh')">
+            <img src="../assets/img1.png" alt="Chhattisgarh" />
+            <div class="overlay"><h3>Chhattisgarh</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Goa')">
+            <img src="../assets/img2.png" alt="Goa" />
+            <div class="overlay"><h3>Goa</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Gujarat')">
+            <img src="../assets/img1.png" alt="Gujarat" />
+            <div class="overlay"><h3>Gujarat</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Haryana')">
+            <img src="../assets/img2.png" alt="Haryana" />
+            <div class="overlay"><h3>Haryana</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Himachal Pradesh')">
+            <img src="../assets/img1.png" alt="Himachal Pradesh" />
+            <div class="overlay"><h3>Himachal Pradesh</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Jharkhand')">
+            <img src="../assets/img2.png" alt="Jharkhand" />
+            <div class="overlay"><h3>Jharkhand</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Karnataka')">
+            <img src="../assets/img1.png" alt="Karnataka" />
+            <div class="overlay"><h3>Karnataka</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Kerala')">
+            <img src="../assets/img2.png" alt="Kerala" />
+            <div class="overlay"><h3>Kerala</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Madhya Pradesh')">
+            <img src="../assets/img1.png" alt="Madhya Pradesh" />
+            <div class="overlay"><h3>Madhya Pradesh</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Maharashtra')">
+            <img src="../assets/img2.png" alt="Maharashtra" />
+            <div class="overlay"><h3>Maharashtra</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Manipur')">
+            <img src="../assets/img1.png" alt="Manipur" />
+            <div class="overlay"><h3>Manipur</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Meghalaya')">
+            <img src="../assets/img2.png" alt="Meghalaya" />
+            <div class="overlay"><h3>Meghalaya</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Mizoram')">
+            <img src="../assets/img1.png" alt="Mizoram" />
+            <div class="overlay"><h3>Mizoram</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Nagaland')">
+            <img src="../assets/img2.png" alt="Nagaland" />
+            <div class="overlay"><h3>Nagaland</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Odisha')">
+            <img src="../assets/img1.png" alt="Odisha" />
+            <div class="overlay"><h3>Odisha</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Punjab')">
+            <img src="../assets/img2.png" alt="Punjab" />
+            <div class="overlay"><h3>Punjab</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Rajasthan')">
+            <img src="../assets/img1.png" alt="Rajasthan" />
+            <div class="overlay"><h3>Rajasthan</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Sikkim')">
+            <img src="../assets/img2.png" alt="Sikkim" />
+            <div class="overlay"><h3>Sikkim</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Tamil Nadu')">
+            <img src="../assets/img1.png" alt="Tamil Nadu" />
+            <div class="overlay"><h3>Tamil Nadu</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Telangana')">
+            <img src="../assets/img2.png" alt="Telangana" />
+            <div class="overlay"><h3>Telangana</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Tripura')">
+            <img src="../assets/img1.png" alt="Tripura" />
+            <div class="overlay"><h3>Tripura</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Uttar Pradesh')">
+            <img src="../assets/img2.png" alt="Uttar Pradesh" />
+            <div class="overlay"><h3>Uttar Pradesh</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Uttarakhand')">
+            <img src="../assets/img1.png" alt="Uttarakhand" />
+            <div class="overlay"><h3>Uttarakhand</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('West Bengal')">
+            <img src="../assets/img2.png" alt="West Bengal" />
+            <div class="overlay"><h3>West Bengal</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Andaman and Nicobar Islands')">
+            <img src="../assets/img1.png" alt="Andaman and Nicobar Islands" />
+            <div class="overlay"><h3>Andaman & Nicobar</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Chandigarh')">
+            <img src="../assets/img2.png" alt="Chandigarh" />
+            <div class="overlay"><h3>Chandigarh</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Dadra and Nagar Haveli and Daman and Diu')">
+            <img src="../assets/img1.png" alt="Dadra and Nagar Haveli and Daman and Diu" />
+            <div class="overlay"><h3>Dadra & Nagar Haveli</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Delhi')">
+            <img src="../assets/img2.png" alt="Delhi" />
+            <div class="overlay"><h3>Delhi</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Jammu and Kashmir')">
+            <img src="../assets/img1.png" alt="Jammu and Kashmir" />
+            <div class="overlay"><h3>Jammu & Kashmir</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Ladakh')">
+            <img src="../assets/img2.png" alt="Ladakh" />
+            <div class="overlay"><h3>Ladakh</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Lakshadweep')">
+            <img src="../assets/img1.png" alt="Lakshadweep" />
+            <div class="overlay"><h3>Lakshadweep</h3></div>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-duration="800" onclick="selectState('Puducherry')">
+            <img src="../assets/img2.png" alt="Puducherry" />
+            <div class="overlay"><h3>Puducherry</h3></div>
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<section class="section" id="genderSection" style="display:none;">
+    <div class="grid">
+        <div class="card imagess" onclick="loadProducts('men')">
+            <img src="../assets/male.png" />
+            <div class="overlay"><h3>Men</h3></div>
+        </div>
+        <div class="card imagess" onclick="loadProducts('women')">
+            <img src="../assets/female.png" />
+            <div class="overlay"><h3>Women</h3></div>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="productSection" style="display:none;">
+    <div class="product-grid" id="productGrid"></div>
+</section>
+
+<footer class="site-footer">
+    <div class="footer-content">
+        <div class="footer-column">
+            <h4>About</h4>
+            <p>Luxury meets comfort. Premium wear for men and women designed for elegance.</p>
+            <div class="social-icons">
+                <a href="#"><i class="ri-instagram-line"></i></a>
+                <a href="#"><i class="ri-facebook-box-line"></i></a>
+                <a href="#"><i class="ri-twitter-x-line"></i></a>
+            </div>
+        </div>
+        <div class="footer-column">
+            <h4>Customer Service</h4>
+            <ul>
+                <li><a href="#">Shipping Info</a></li>
+                <li><a href="#">Returns</a></li>
+                <li><a href="#">Track Order</a></li>
+            </ul>
+        </div>
+        <div class="footer-column">
+            <h4>Company</h4>
+            <ul>
+                <li><a href="#">Our Story</a></li>
+                <li><a href="#">Careers</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        &copy; 2025 W&M. All rights reserved.
+    </div>
+</footer>
+
+
+<script>
+    // Moved backendURL to the top and set base URL
+    const backendURL = "http://localhost:5000";
+    let allProducts = []; // This will hold all products fetched initially
+    let selectedState = null;
+    let selectedGender = null;
+
+    // Function to load all products once the page loads
+    async function loadAllProducts() {
+        try {
+            const res = await fetch(`${backendURL}/api/products`);
+            if (!res.ok) {
+                console.error("Failed to fetch all products:", res.status, res.statusText);
+                return;
+            }
+            allProducts = await res.json();
+            console.log("All products loaded:", allProducts); // For debugging: check this in console
+        } catch (error) {
+            console.error("Error loading all products:", error);
+        }
+    }
+
+    // Call loadAllProducts when the DOM content is fully loaded
+    document.addEventListener("DOMContentLoaded", () => {
+        loadAllProducts(); // Load all products initially
+        // AOS.init(); // Initialize AOS if not done by main.js
+        // ... (rest of your existing DOMContentLoaded logic from main.js if needed)
+    });
+
+
+    async function selectState(state) {
+        selectedState = state;
+        document.getElementById("mainTitle").textContent = `${state} - Choose Category`;
+        document.getElementById("stateSection").style.display = "none";
+        document.getElementById("genderSection").style.display = "block";
+        document.getElementById("productSection").style.display = "none";
+        document.getElementById("backBtn").style.display = "block";
+    }
+
+    async function loadProducts(gender) {
+        selectedGender = gender;
+        document.getElementById("mainTitle").textContent = `${selectedState} - ${gender.charAt(0).toUpperCase() + gender.slice(1)} Collection`;
+        document.getElementById("genderSection").style.display = "none";
+        document.getElementById("productSection").style.display = "block";
+
+        // Filter from allProducts which is already loaded
+        const filtered = allProducts.filter(p =>
+            p.state === selectedState && p.category.toLowerCase() === gender
+        );
+
+        if (filtered.length === 0) {
+            document.getElementById("productGrid").innerHTML = "<p style='text-align:center; margin-top:2rem;'>No products found for this selection.</p>";
+            console.warn("No products found for the selected state and gender.");
+            return;
+        }
+
+        document.getElementById("productGrid").innerHTML = filtered.map((p, i) => `
+            <div class="product-card" data-aos="fade-up" data-aos-delay="${i * 50}">
+                <img src="${backendURL}/${p.image}" alt="${p.name}" onclick="viewProduct('${p._id}')">
+                <h4>${p.name}</h4>
+                <p>₹${p.price.toLocaleString()}</p>
+                <button onclick="addToCart('${p._id}')">Add to Cart</button>
+            </div>
+        `).join('');
+    }
+
+    function viewProduct(id) {
+        sessionStorage.setItem("lastState", selectedState);
+        sessionStorage.setItem("lastGender", selectedGender);
+        window.location.href = `product.html?id=${id}`;
+    }
+
+    function handleBack() {
+        if (document.getElementById("productSection").style.display === "block") {
+            document.getElementById("productSection").style.display = "none";
+            document.getElementById("genderSection").style.display = "block";
+            document.getElementById("mainTitle").textContent = `${selectedState} - Choose Category`;
+        } else if (document.getElementById("genderSection").style.display === "block") {
+            document.getElementById("genderSection").style.display = "none";
+            document.getElementById("stateSection").style.display = "block";
+            document.getElementById("mainTitle").textContent = `Explore by State`;
+            document.getElementById("backBtn").style.display = "none";
+        } else {
+            window.location.href = "shop.html";
+        }
+    }
+
+    function addToCart(id) {
+        const product = allProducts.find(p => p._id === id);
+        if (!product) {
+            alert("Product not found in available list. Please refresh.");
+            console.error("Product with ID", id, "not found in allProducts array.");
+            return;
+        }
+
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+        const existingIndex = cart.findIndex(item => item._id === product._id); // Now product should not be null
+        if (existingIndex !== -1) {
+            cart[existingIndex].quantity += 1;
+        } else {
+            cart.push({ ...product, quantity: 1 });
+        }
+
+        localStorage.setItem("cart", JSON.stringify(cart));
+        alert("✅ Added to cart!");
+    }
+</script>
+
+
+<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script src="main.js"></script>
+
+<script>
+    // Set AOS attributes dynamically
+    function applyScrollAnimations() {
+        const isMobile = window.innerWidth <= 768;
+        const cards = document.querySelectorAll("#stateSection .card");
+
+        cards.forEach((card, i) => {
+            // Reset any previous animation
+            card.removeAttribute("data-aos");
+
+            if (isMobile) {
+                // Mobile — alternate between left/right/zoom
+                if (i % 3 === 0) {
+                    card.setAttribute("data-aos", "fade-left");
+                } else if (i % 3 === 1) {
+                    card.setAttribute("data-aos", "fade-right");
+                } else {
+                    card.setAttribute("data-aos", "zoom-in");
+                }
+            } else {
+                // Desktop — slight zoom on hover, no scroll effect
+                card.setAttribute("data-aos", "zoom-in");
+            }
+        });
+
+        AOS.init({
+            duration: 800,
+            once: true,
+            easing: "ease-in-out",
+        });
+    }
+
+    window.addEventListener("DOMContentLoaded", applyScrollAnimations);
+    window.addEventListener("resize", applyScrollAnimations);
+</script>
+
+
+
+</body>
+</html>

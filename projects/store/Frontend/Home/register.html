@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register - Wo&Men</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: #fff;
+    }
+
+    .auth-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 2rem;
+      background: #fff;
+    }
+
+    .auth-box {
+      max-width: 420px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 18px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+      padding: 2.5rem 2rem;
+      text-align: center;
+    }
+
+    .auth-box img {
+      height: 50px;
+      margin-bottom: 1.5rem;
+    }
+
+    .auth-box h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .auth-form input {
+      padding: 0.75rem 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    .otp-group {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .otp-input {
+      width: 1.8rem;
+      height: 1.8rem;
+      text-align: center;
+      font-size: 1.25rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 768px) {
+      .otp-input {
+      width: 0.6rem;
+      height: 0.6rem;
+    }
+  }
+    
+
+    .auth-form button {
+      padding: 0.75rem;
+      background: #000;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 1rem;
+    }
+
+    .auth-form button:hover {
+      background: #333;
+    }
+
+    .google-login {
+      margin-top: 1rem;
+    }
+
+    .auth-link {
+      margin-top: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    .auth-link a {
+      color: #000;
+      font-weight: 500;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-box">
+      <img src="../assets/PNG/Wo&MenLogo.png" alt="Wo&Men Logo" />
+      <h1>Register with OTP</h1>
+      <form id="register-form" class="auth-form">
+        <input type="text" id="reg-name" placeholder="Full Name" required />
+        <input type="email" id="reg-email" placeholder="Email Address" required />
+        <input type="password" id="reg-password" placeholder="Create Password" required />
+
+        <div class="otp-group">
+          <input type="text" maxlength="1" class="otp-input" />
+          <input type="text" maxlength="1" class="otp-input" />
+          <input type="text" maxlength="1" class="otp-input" />
+          <input type="text" maxlength="1" class="otp-input" />
+          <input type="text" maxlength="1" class="otp-input" />
+          <input type="text" maxlength="1" class="otp-input" />
+        </div>
+
+        <button type="button" id="send-otp">Send OTP</button>
+        <button type="submit">Register</button>
+      </form>
+
+      <div class="google-login">
+        <div id="g_id_onload"
+             data-client_id="YOUR_GOOGLE_CLIENT_ID"
+             data-callback="handleGoogleLogin"
+             data-auto_prompt="false"></div>
+        <div class="g_id_signin" data-type="standard" data-size="large"></div>
+      </div>
+
+      <p class="auth-link">Already registered? <a href="login.html">Login</a></p>
+    </div>
+  </div>
+
+  <script>
+    const maskEmail = (email) => {
+      const [name, domain] = email.split('@');
+      const masked = name[0] + '*'.repeat(name.length - 2) + name.slice(-1);
+      return `${masked}@${domain}`;
+    };
+
+    document.querySelectorAll('.otp-input').forEach((input, i, inputs) => {
+      input.addEventListener('input', () => {
+        if (input.value && i < inputs.length - 1) {
+          inputs[i + 1].focus();
+        }
+      });
+    });
+
+    document.getElementById("send-otp").addEventListener("click", async () => {
+      const name = document.getElementById("reg-name").value.trim();
+      const email = document.getElementById("reg-email").value.trim();
+      const btn = document.getElementById("send-otp");
+
+      if (!name || !email) {
+        return Swal.fire({ icon: "error", text: "Please enter your full name and email address." });
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Sending...";
+
+      try {
+        const res = await fetch("http://localhost:5000/api/auth/send-register-otp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email }),
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          Swal.fire({
+            icon: "success",
+            title: "OTP Sent",
+            text: `An OTP has been sent to ${maskEmail(email)}. Please check your inbox.`,
+          });
+        } else {
+          Swal.fire({ icon: "error", text: data.message || "Something went wrong." });
+        }
+      } catch {
+        Swal.fire({ icon: "error", text: "Failed to send OTP. Please try again." });
+      }
+
+      btn.disabled = false;
+      btn.textContent = "Send OTP";
+    });
+
+    document.getElementById("register-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById("reg-name").value.trim();
+      const email = document.getElementById("reg-email").value.trim();
+      const password = document.getElementById("reg-password").value.trim();
+      const otp = Array.from(document.querySelectorAll(".otp-input")).map(input => input.value).join("");
+
+      if (!name || !email || !password || otp.length !== 6) {
+        return Swal.fire({ icon: "error", text: "Please fill in all fields and complete the 6-digit OTP." });
+      }
+
+      try {
+        const res = await fetch("http://localhost:5000/api/auth/register-otp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password, otp }),
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          localStorage.setItem("token", data.token);
+          window.location.href = "index.html";
+        } else {
+          Swal.fire({ icon: "error", text: data.message || "Registration failed." });
+        }
+      } catch {
+        Swal.fire({ icon: "error", text: "Server error occurred during registration." });
+      }
+    });
+  </script>
+
+  <script src="main.js"></script>
+</body>
+</html>

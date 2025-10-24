@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cart - W&M</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css"/>
+
+  <style>
+   @font-face {
+  font-family: 'Wednesday';
+  src: url('../Fonts/Wednesday.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #fff;
+      color: #111;
+
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    nav.nav-bar {
+      max-width: 1280px;
+      margin: auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      flex-wrap: wrap;
+    }
+
+    .nav-left, .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .nav-left a i, .nav-right i {
+      font-size: 20px;
+      color: #000;
+    }
+
+    .nav-center {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .nav-center .textlogo{
+      font-family: 'wednesday';
+      font-size: 60px;
+      letter-spacing: 0px;
+      /* height: 100px; */
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
+    }
+
+    .nav-right #user-info {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+     .menu-icon {
+    display: none;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 999;
+  }
+
+  /* Sidebar */
+  .mobile-sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 250px;
+    height: 100vh;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 2px 0 20px rgba(0,0,0,0.1);
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    transition: left 0.3s ease;
+  }
+
+  .mobile-sidebar.open {
+    left: 0;
+  }
+
+  .mobile-sidebar a {
+    font-size: 18px;
+    margin-bottom: 1.5rem;
+    color: #111;
+  }
+
+  .close-btn {
+    font-size: 24px;
+    margin-bottom: 2rem;
+    align-self: flex-end;
+    cursor: pointer;
+  }
+
+  /* Mobile Layout */
+  @media (max-width: 768px) {
+    .nav-left,
+    .nav-right {
+      display: none;
+    }
+
+    .menu-icon {
+      display: block;
+    }
+
+    .nav-bar {
+      justify-content: space-between;
+    }
+
+    .nav-center .textlogo{
+      flex: unset;
+      margin: 0 auto;
+      font-size: 40px;
+    }
+  }
+
+    .container {
+      max-width: 1000px;
+      margin: 3rem auto;
+      padding: 0 1rem;
+    }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .cart-items {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .cart-item {
+      display: flex;
+      gap: 1rem;
+      border: 1px solid #eee;
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.03);
+    }
+
+    .cart-item img {
+      width: 120px;
+      height: 120px;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+
+    .item-info {
+      flex: 1;
+    }
+
+    .item-info h4 {
+      font-size: 1.1rem;
+      margin: 0 0 0.3rem;
+    }
+
+    .item-info p {
+      font-size: 0.95rem;
+      color: #555;
+    }
+
+    .remove-btn {
+      background: none;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      color: #999;
+    }
+
+    .summary {
+      margin-top: 2rem;
+      text-align: right;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .checkout-btn {
+      background: #000;
+      color: #fff;
+      border: none;
+      padding: 0.9rem 2rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      cursor: pointer;
+    }
+
+    .checkout-btn:hover {
+      background: #222;
+    }
+
+    @media (max-width: 768px) {
+      .cart-item {
+        flex-direction: column;
+        align-items: center;
+      }
+
+       .footer-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 2rem;
+      }
+    }
+
+
+    /* Footer */
+    footer.site-footer {
+      background: #f7f7f7;
+      padding: 4rem 2rem 2rem;
+      margin-top: 4rem;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: auto;
+      display: flex;
+      gap: 3rem;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .footer-column {
+      flex: 1 1 220px;
+    }
+
+    .footer-column h4 {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .footer-column ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .footer-column ul li {
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-column ul li a {
+      color: #444;
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .social-icons a i {
+      font-size: 18px;
+      color: #000;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 2rem;
+      font-size: 0.9rem;
+      color: #777;
+    }
+
+  </style>
+</head>
+<body>
+  <header>
+  <nav class="nav-bar">
+    <i class="ri-menu-line menu-icon" id="menuToggle"></i>
+
+   <div class="nav-center">
+      <!-- <img src="../assets/PNG/Wo&MenLogo.png" alt="W&M Logo"> -->
+    <div class="textlogo"><a href="index.html">wo & men</a></div>
+    </div>
+
+    <div class="nav-left">
+      <a href="index.html"><i class="ri-home-line"></i></a>
+      <a href="shop.html"><i class="ri-shopping-bag-line"></i></a>
+      <a href="cart.html"><i class="ri-shopping-cart-line"></i></a>
+      <a href="orders.html"><i class="ri-file-list-2-line"></i></a>
+    </div>
+    <!-- nav-right (replace this part only) -->
+<div class="nav-right">
+  <span id="user-info"></span>
+  <img id="nav-avatar" style="width:30px; height:30px; border-radius:50%; object-fit:cover; cursor:pointer;">
+
+
+  <button id="logout-btn" class="icon-btn" style="display: none;"><i class="ri-logout-box-line"></i></button>
+</div>
+
+  </nav>
+
+ <!-- Mobile sidebar -->
+ <div class="mobile-sidebar" id="mobileSidebar">
+  <i class="ri-close-line close-btn" id="closeSidebar"></i>
+
+  <!-- ✅ Mobile user profile (NEW) -->
+  <!-- 📱 Mobile User Profile (Elegant UI) -->
+<div id="mobile-user" style="
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  padding: 1rem 0;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.65);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+">
+  <img id="mobile-avatar" 
+       src="../assets/user.png" 
+       alt="User"
+       style="
+         width: 70px;
+         height: 70px;
+         border-radius: 50%;
+         object-fit: cover;
+         box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+         cursor: pointer;
+         transition: transform 0.3s ease;
+       "
+       onmouseover="this.style.transform='scale(1.05)'"
+       onmouseout="this.style.transform='scale(1)'"
+  >
+  <div id="mobile-name" style="
+    font-size: 15px;
+    font-weight: 500;
+    color: #111;
+    letter-spacing: 0.3px;
+  ">Guest</div>
+</div>
+
+
+  <a href="index.html"><i class="ri-home-line"></i> &nbsp; Home</a>
+  <a href="shop.html"><i class="ri-shopping-bag-line"></i> &nbsp; Shop</a>
+  <a href="cart.html"><i class="ri-shopping-cart-line"></i> &nbsp; Cart</a>
+  <a href="orders.html"><i class="ri-file-list-2-line"></i> &nbsp; Orders</a>
+  <a href="login.html" id="mobile-login"><i class="ri-user-line"></i> &nbsp; Login</a>
+  <a href="#" id="mobile-logout" style="display: none;"><i class="ri-logout-box-line"></i> &nbsp; Logout</a>
+</div>
+
+</header>
+
+  <div class="container" data-aos="fade-up">
+    <h2>Your Cart</h2>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="summary">
+      Total: ₹<span id="totalPrice">0</span><br>
+      <a href="checkout.html"><button class="checkout-btn">Checkout</button></a>
+    </div>
+  </div>
+
+
+
+  <!-- Footer -->
+  <footer class="site-footer" data-aos="fade-up" data-aos-delay="300">
+    <div class="footer-content">
+      <div class="footer-column">
+        <h4>About</h4>
+        <p>Luxury meets comfort. Premium wear for men and women designed for elegance.</p>
+        <div class="social-icons">
+          <a href="#"><i class="ri-instagram-line"></i></a>
+          <a href="#"><i class="ri-facebook-box-line"></i></a>
+          <a href="#"><i class="ri-twitter-x-line"></i></a>
+        </div>
+      </div>
+      <div class="footer-column">
+        <h4>Customer Service</h4>
+        <ul>
+          <li><a href="#">Shipping Info</a></li>
+          <li><a href="#">Returns</a></li>
+          <li><a href="#">Track Order</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">Our Story</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2025 W&M. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    function renderCart() {
+      const container = document.getElementById("cartItems");
+      const totalPriceEl = document.getElementById("totalPrice");
+      container.innerHTML = "";
+
+      let total = 0;
+      cart.forEach((item, i) => {
+        total += item.price;
+        container.innerHTML += `
+          <div class="cart-item" data-aos="fade-up">
+            <img src="${item.image.startsWith('http') ? item.image : 'http://localhost:5000/' + item.image}" alt="${item.name}">
+
+            <div class="item-info">
+              <h4>${item.name}</h4>
+              <p>₹${item.price}</p>
+            </div>
+            <button class="remove-btn" onclick="removeItem(${i})"><i class="ri-close-line"></i></button>
+          </div>
+        `;
+      });
+
+      totalPriceEl.textContent = total;
+    }
+
+    function removeItem(i) {
+      cart.splice(i, 1);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      renderCart();
+    }
+
+    renderCart();
+  </script>
+
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+  <script>AOS.init();</script>
+  <script src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Track Order – W&M</title>
+  <link rel="stylesheet" href="home-style.css" />
+  <!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+
+
+<style>
+    @font-face {
+  font-family: 'Wednesday';
+  src: url('../Fonts/Wednesday.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #fff;
+      color: #111;
+
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    nav.nav-bar {
+      max-width: 1280px;
+      margin: auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      flex-wrap: wrap;
+    }
+
+    .nav-left, .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .nav-left a i, .nav-right i {
+      font-size: 20px;
+      color: #000;
+    }
+
+    .nav-center {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .nav-center .textlogo{
+      font-family: 'wednesday';
+      font-size: 60px;
+      letter-spacing: 0px;
+      /* height: 100px; */
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
+    }
+
+    .nav-right #user-info {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+     .menu-icon {
+    display: none;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 999;
+  }
+
+  /* Sidebar */
+  .mobile-sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 250px;
+    height: 100vh;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 2px 0 20px rgba(0,0,0,0.1);
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    transition: left 0.3s ease;
+  }
+
+  .mobile-sidebar.open {
+    left: 0;
+  }
+
+  .mobile-sidebar a {
+    font-size: 18px;
+    margin-bottom: 1.5rem;
+    color: #111;
+  }
+
+  .close-btn {
+    font-size: 24px;
+    margin-bottom: 2rem;
+    align-self: flex-end;
+    cursor: pointer;
+  }
+
+  /* Mobile Layout */
+  @media (max-width: 768px) {
+    .nav-left,
+    .nav-right {
+      display: none;
+    }
+
+    .menu-icon {
+      display: block;
+    }
+
+    .nav-bar {
+      justify-content: space-between;
+    }
+
+    .nav-center .textlogo{
+      flex: unset;
+      margin: 0 auto;
+      font-size: 40px;
+    }
+  }
+</style>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" />
+  <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+</head>
+<body class="light-mode">
+  <!-- Header -->
+ <header class="blur-header">
+  <nav class="nav-bar">
+    <!-- Left side: empty for spacing -->
+     <div class="nav-left header-icons">
+      <a href="index.html" title="Home"><i data-lucide="home"></i></a>
+      <a href="shop.html" title="Shop"><i data-lucide="shopping-bag"></i></a>
+      <a href="cart.html" title="Cart"><i data-lucide="shopping-cart"></i></a>
+      <a href="orders.html" title="Orders"><i data-lucide="package"></i></a>
+    </div>
+
+    <!-- Center: logo -->
+    <div class="nav-center">
+      <!-- <img src="../assets/PNG/Wo&MenLogo.png" alt="W&M Logo"> -->
+    <div class="textlogo"><a href="index.html">wo & men</a></div>
+    </div>
+
+    <!-- Right side: user login/logout -->
+    <div class="nav-right user-actions">
+      <span id="user-info"></span>
+      <button id="login-btn" title="Login"><i data-lucide="log-in"></i></button>
+      <button id="logout-btn" title="Logout"><i data-lucide="log-out"></i></button>
+    </div>
+  </nav>
+</header>
+
+  <!-- Tracking Section -->
+  <main class="track-section" data-aos="fade-up">
+    <h1 class="page-title">Track Your Order</h1>
+    <form class="track-form">
+      <input type="text" placeholder="Enter Order ID or Email" required />
+      <button type="submit" class="btn-primary">Track</button>
+    </form>
+
+    <!-- Order Status Timeline -->
+    <div class="order-status">
+      <div class="status-step active">
+        <i class="ri-checkbox-circle-fill"></i>
+        <p>Order Placed</p>
+      </div>
+      <div class="status-step active">
+        <i class="ri-box-3-fill"></i>
+        <p>Packed</p>
+      </div>
+      <div class="status-step">
+        <i class="ri-truck-fill"></i>
+        <p>Shipped</p>
+      </div>
+      <div class="status-step">
+        <i class="ri-home-4-fill"></i>
+        <p>Delivered</p>
+      </div>
+    </div>
+  </main>
+
+  <script src="main.js"></script>
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+  <script>AOS.init();</script>
+</body>
+</html>
+
+
